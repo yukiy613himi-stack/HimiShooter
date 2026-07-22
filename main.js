@@ -211,7 +211,7 @@ class Player{
                 continue;
             }
             
-            if (t.x > himi_js.width / 2) {
+            if (t.x < himi_js.width / 2) {
                 this.area.x += this.speed * delta;
             }else {
                 this.area.x -= this.speed * delta;
