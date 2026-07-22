@@ -40,7 +40,7 @@ class PlayScreen{
         this.screen = screen;
         this.score = 0;
         this.spawn_timer = 0;
-        this.under_line = himi_js.height - 250;
+        this.under_line = himi_js.height - 350;
         this.player = new Player(this);
         this.player_bullet = new Player_Bullet(this);
         this.enemys = [];
