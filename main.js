@@ -206,12 +206,12 @@ class Player{
             const t = himi_js.touches[id];
 
             //玉発射位置がタッチされていたら動かない
-            if (t.y > this.screen.under_line) {
+            if (t.y < this.screen.under_line) {
                 this.shoot();
                 continue;
             }
             
-            if (t.x < himi_js.width / 2) {
+            if (t.x > himi_js.width / 2) {
                 this.area.x += this.speed * delta;
             }else {
                 this.area.x -= this.speed * delta;
