@@ -91,7 +91,7 @@ class PlayScreen{
         this.bullet_draw();
         this.player_bullet.draw();
         this.player.draw();
-        himi_js.draw_text(`SCORE: ${this.score}`, himi_js.width / 2, himi_js.height - 150, 70, "white");
+        himi_js.draw_text(`←       SCORE: ${this.score}       →`, himi_js.width / 2, himi_js.height - 150, 70, "white");
         himi_js.draw_text(`PLAYER: ${this.player.lives}`, himi_js.width / 2, himi_js.height - 70, 50, "white");
         himi_js.draw_line(0, this.under_line, himi_js.width, this.under_line, "white", 5);;
     }
