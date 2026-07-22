@@ -49,8 +49,18 @@ class PlayScreen{
 
     spawn_enemy(delta) {
         this.spawn_timer += delta;
-        if (this.spawn_timer > 1.5) {
-            this.enemys.push(new Tuna(this, himi_js.rand_int(0, himi_js.width - 80), 0));
+        if (this.spawn_timer > 2.5) {
+            if (himi_js.rand_int(0, 30) != 0){
+                if (himi_js.rand_int(0, 2) != 0){
+                    this.enemys.push(new Tuna(this, himi_js.rand_int(0, himi_js.width - 80), 0));
+                }else if (himi_js.rand_int(0, 1) == 0){
+                    this.enemys.push(new Jellyfish(this, himi_js.rand_int(0, himi_js.width - 80), 0));
+                }else{
+                    this.enemys.push(new Sea_urchin(this, himi_js.rand_int(0, himi_js.width - 80), 0));
+                }
+            }else {
+                this.enemys.push(new mantis_shrimp(this, himi_js.rand_int(0, himi_js.width - 80), 0));
+            }
             this.spawn_timer = 0;
         }
     }
@@ -283,6 +293,246 @@ class Tuna{
             }
         }
         this.screen.enemy_bullets.push(new Enemy_Bullet(this.screen, himi_js.load_image("assets/tuna_bullet.png"), this.area.x + this.area.w / 2, this.area.y + this.area.h, 0, 300))
+    }
+
+    update(delta){
+        //動かす処理
+        if (this.explosion_timer == null) {
+            this.area.y += 150 * delta;
+            if (this.move_right){
+                this.area.x += 50 * delta;
+            }else{
+                this.area.x -= 50 * delta;
+            }
+            if (this.area.x < 0) {
+                this.move_right = true;
+            }else if (this.area.x + this.area.w > himi_js.width){
+                this.move_right = false;
+            }
+        }
+        //弾発射処理
+        this.shoot_timer -= delta;
+        if (this.shoot_timer <= 0 && this.explosion_timer == null) {
+            this.shoot();
+            this.shoot_timer = himi_js.rand_int(2500, 4500) / 1000
+        }
+        //プレイヤーの弾に当たった時の処理
+        if (himi_js.collision(this.area, this.screen.player_bullet.area) && this.explosion_timer == null) {
+            this.screen.score += this.point;
+            this.explosion_timer = 0.3;
+            this.screen.player.can_shoot = true;
+            this.image = himi_js.load_image("assets/explosion.png");
+        }
+        //プレイヤーに当たった時の処理
+        if (himi_js.collision(this.area, this.screen.player.area) && this.explosion_timer == null) {
+            this.screen.player.take_damage();
+            this.explosion_timer = 0.3;
+            this.image = himi_js.load_image("assets/explosion.png");
+        }
+        //消えるまでのタイマーを減らす処理
+        if (this.explosion_timer != null) {
+            this.explosion_timer -= delta;
+        }
+        //消す処理
+        if (this.explosion_timer <= 0 && this.explosion_timer != null || this.area.y + this.area.h > this.screen.under_line) {
+            const index = this.screen.enemys.indexOf(this);
+            if (index !== -1) {
+                this.screen.enemys.splice(index, 1);
+            }
+        }
+    }
+
+    draw() {
+        himi_js.area_to_image(this.image, this.area);
+    }
+}
+
+class Sea_urchin{
+    constructor(screen, x, y){
+        this.screen = screen;
+        this.point = 300;
+        this.area = himi_js.area(x, y, 80, 80);
+        this.image = himi_js.load_image("assets/sea_urchin.png");
+        this.explosion_timer = null;
+        if (himi_js.rand_int(0, 1) == 0){
+            this.move_right = false;
+        }else{
+            this.move_right = true;
+        }
+        this.shoot_timer = 1;
+    }
+
+    shoot() {
+        if (himi_js.rand_int(0, 1) == 0) {
+            if (this.move_right){
+                this.move_right = false;
+            }else{
+                this.move_right = true;
+            }
+        }
+        this.screen.enemy_bullets.push(new Enemy_Bullet(this.screen, himi_js.load_image("assets/sea_urchin_bullet.png"), this.area.x + this.area.w / 2, this.area.y + this.area.h, -150, 300))
+        this.screen.enemy_bullets.push(new Enemy_Bullet(this.screen, himi_js.load_image("assets/sea_urchin_bullet.png"), this.area.x + this.area.w / 2, this.area.y + this.area.h, 0, 300))
+        this.screen.enemy_bullets.push(new Enemy_Bullet(this.screen, himi_js.load_image("assets/sea_urchin_bullet.png"), this.area.x + this.area.w / 2, this.area.y + this.area.h, 150, 300))
+    }
+
+    update(delta){
+        //動かす処理
+        if (this.explosion_timer == null) {
+            this.area.y += 150 * delta;
+            if (this.move_right){
+                this.area.x += 50 * delta;
+            }else{
+                this.area.x -= 50 * delta;
+            }
+            if (this.area.x < 0) {
+                this.move_right = true;
+            }else if (this.area.x + this.area.w > himi_js.width){
+                this.move_right = false;
+            }
+        }
+        //弾発射処理
+        this.shoot_timer -= delta;
+        if (this.shoot_timer <= 0 && this.explosion_timer == null) {
+            this.shoot();
+            this.shoot_timer = himi_js.rand_int(2500, 4500) / 1000
+        }
+        //プレイヤーの弾に当たった時の処理
+        if (himi_js.collision(this.area, this.screen.player_bullet.area) && this.explosion_timer == null) {
+            this.screen.score += this.point;
+            this.explosion_timer = 0.3;
+            this.screen.player.can_shoot = true;
+            this.image = himi_js.load_image("assets/explosion.png");
+        }
+        //プレイヤーに当たった時の処理
+        if (himi_js.collision(this.area, this.screen.player.area) && this.explosion_timer == null) {
+            this.screen.player.take_damage();
+            this.explosion_timer = 0.3;
+            this.image = himi_js.load_image("assets/explosion.png");
+        }
+        //消えるまでのタイマーを減らす処理
+        if (this.explosion_timer != null) {
+            this.explosion_timer -= delta;
+        }
+        //消す処理
+        if (this.explosion_timer <= 0 && this.explosion_timer != null || this.area.y + this.area.h > this.screen.under_line) {
+            const index = this.screen.enemys.indexOf(this);
+            if (index !== -1) {
+                this.screen.enemys.splice(index, 1);
+            }
+        }
+    }
+
+    draw() {
+        himi_js.area_to_image(this.image, this.area);
+    }
+}
+
+class Jellyfish{
+    constructor(screen, x, y){
+        this.screen = screen;
+        this.point = 300;
+        this.ammo = 0;
+        this.area = himi_js.area(x, y, 80, 80);
+        this.image = himi_js.load_image("assets/jellyfish.png");
+        this.explosion_timer = null;
+        if (himi_js.rand_int(0, 1) == 0){
+            this.move_right = false;
+        }else{
+            this.move_right = true;
+        }
+        this.shoot_timer = 1;
+    }
+
+    shoot() {
+        if (himi_js.rand_int(0, 1) == 0) {
+            if (this.move_right){
+                this.move_right = false;
+            }else{
+                this.move_right = true;
+            }
+        }
+        this.area.y -= 150
+        this.screen.enemy_bullets.push(new Enemy_Bullet(this.screen, himi_js.load_image("assets/jellyfish_bullet.png"), this.area.x + this.area.w / 2 + 50, this.area.y + this.area.h, 0, 300))
+        this.screen.enemy_bullets.push(new Enemy_Bullet(this.screen, himi_js.load_image("assets/jellyfish_bullet.png"), this.area.x + this.area.w / 2, this.area.y + this.area.h, 0, 300))
+        this.screen.enemy_bullets.push(new Enemy_Bullet(this.screen, himi_js.load_image("assets/jellyfish_bullet.png"), this.area.x + this.area.w / 2 - 50, this.area.y + this.area.h, 0, 300))
+    }
+
+    update(delta){
+        //動かす処理
+        if (this.explosion_timer == null) {
+            this.area.y += 150 * delta;
+            if (this.move_right){
+                this.area.x += 50 * delta;
+            }else{
+                this.area.x -= 50 * delta;
+            }
+            if (this.area.x < 0) {
+                this.move_right = true;
+            }else if (this.area.x + this.area.w > himi_js.width){
+                this.move_right = false;
+            }
+        }
+        //弾発射処理
+        this.shoot_timer -= delta;
+        if (this.shoot_timer <= 0 && this.explosion_timer == null) {
+            this.shoot();
+            this.shoot_timer = himi_js.rand_int(2500, 4500) / 1000
+        }
+        //プレイヤーの弾に当たった時の処理
+        if (himi_js.collision(this.area, this.screen.player_bullet.area) && this.explosion_timer == null) {
+            this.screen.score += this.point;
+            this.explosion_timer = 0.3;
+            this.screen.player.can_shoot = true;
+            this.image = himi_js.load_image("assets/explosion.png");
+        }
+        //プレイヤーに当たった時の処理
+        if (himi_js.collision(this.area, this.screen.player.area) && this.explosion_timer == null) {
+            this.screen.player.take_damage();
+            this.explosion_timer = 0.3;
+            this.image = himi_js.load_image("assets/explosion.png");
+        }
+        //消えるまでのタイマーを減らす処理
+        if (this.explosion_timer != null) {
+            this.explosion_timer -= delta;
+        }
+        //消す処理
+        if (this.explosion_timer <= 0 && this.explosion_timer != null || this.area.y + this.area.h > this.screen.under_line) {
+            const index = this.screen.enemys.indexOf(this);
+            if (index !== -1) {
+                this.screen.enemys.splice(index, 1);
+            }
+        }
+    }
+
+    draw() {
+        himi_js.area_to_image(this.image, this.area);
+    }
+}
+
+class mantis_shrimp{
+    constructor(screen, x, y){
+        this.screen = screen;
+        this.point = 500;
+        this.area = himi_js.area(x, y, 80, 130);
+        this.image = himi_js.load_image("assets/mantis_shrimp.png");
+        this.explosion_timer = null;
+        if (himi_js.rand_int(0, 1) == 0){
+            this.move_right = false;
+        }else{
+            this.move_right = true;
+        }
+        this.shoot_timer = 1;
+    }
+
+    shoot() {
+        if (himi_js.rand_int(0, 1) == 0) {
+            if (this.move_right){
+                this.move_right = false;
+            }else{
+                this.move_right = true;
+            }
+        }
+        this.screen.enemy_bullets.push(new Enemy_Bullet(this.screen, himi_js.load_image("assets/mantis_shrimp_bullet.png"), this.area.x + this.area.w / 2, this.area.y + this.area.h, 0, 1500))
     }
 
     update(delta){

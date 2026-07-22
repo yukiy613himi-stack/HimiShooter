@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name = "viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            touch-action: none;
+            background-color: black;
+        }
+        .center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class = "center">
+    <canvas id = "canvas"></canvas>
+    </div>
+    <script>
+        "use strict"
+        const himi_js = {
+            canvas: null,
+            ctx: null,
+
+            last_window_width: 0,
+            last_window_height: 0,
+
+            //初期化
+            init(width, height, title = "") {
+                //初期化
+                this.canvas = document.getElementById("canvas");
+                this.ctx = this.canvas.getContext("2d");
+
+                //タイトル保存
+                this.title = title;
+                //HTMLのタイトルに反映
+                document.title = this.title;
+                
+                //画面サイズ設定
+                this.canvas.width = width;
+                this.canvas.height = height;
+
+                this.width = width;
+                this.height = height;
+
+                this.resize_canvas();
+
+                this.last_window_width = window.innerWidth;
+                this.last_window_height = window.innerHeight;
+
+                window.addEventListener("resize", () => this.resize_canvas());
+
+                //ゲームパッド用
+                this.pad_map = {
+                    a: 0,
+                    b: 1,
+                    x: 2,
+                    y: 3,
+
+                    lb: 4,
+                    rb: 5,
+
+                    lt: 6,
+                    rt: 7,
+
+                    select: 8,
+                    start: 9,
+
+                    ls: 10,
+                    rs: 11,
+
+                    up: 12,
+                    down: 13,
+                    left: 14,
+                    right: 15
+                }
+
+                this.gamepad = {
+                    connected:false,
+                    buttons: [],
+                    axes: []
+                };
+
+                window.addEventListener("gamepadconnected", (e) => {
+                    this.gamepad.connected = true;
+                });
+
+                window.addEventListener("gamepaddisconnected", () => {
+                    this.gamepad.connected = false;
+                });
+
+                //キー入力用
+                this.keys = {};
+                document.addEventListener("keydown", (e) => {
+                    this.keys[e.key] = true;
+                });
+                document.addEventListener("keyup", (e) => {
+                    this.keys[e.key] = false;
+                });
+                this.canvas.tabIndex = 1;
+                this.canvas.focus();
+
+                this.mouse = {x : 0, y : 0};
+                this.mouse_down = false;
+                this.mouse_clicked = false;
+
+                //マウスクリック/タップ検知
+                this.canvas.addEventListener("mousemove", (e) => {
+                    const pos = this.get_mouse_pos(e);
+                    this.mouse.x = pos.x;
+                    this.mouse.y = pos.y;
+                });
+
+                this.canvas.addEventListener("touchmove", (e) => {
+                    const t = e.touches[0];
+                    const pos = this.get_mouse_pos(t);
+                    this.mouse.x = pos.x;
+                    this.mouse.y = pos.y;
+                });
+
+                this.canvas.addEventListener("mousedown", e => {
+                    const pos = this.get_mouse_pos(e);
+                    this.mouse.x = pos.x;
+                    this.mouse.y = pos.y;
+                    
+                    this.mouse_down = true;
+                    this.mouse_clicked = true;
+                });
+
+                window.addEventListener("mouseup", e => {
+                    this.mouse_down = false;
+                })
+
+                this.canvas.addEventListener("touchstart", e => {
+                    const t = e.touches[0];
+                    const pos = this.get_mouse_pos(t);
+                    this.mouse.x = pos.x;
+                    this.mouse.y = pos.y;
+                    
+                    this.mouse_down = true;
+                    this.mouse_clicked = true;
+                });
+
+                window.addEventListener("touchend", e => {
+                    this.mouse_down = false;
+                });
+
+                //マルチタップ対応
+                himi_js.touches = {};
+
+                this.canvas.addEventListener("pointerdown", e => {
+                    const pos = this.get_mouse_pos(e);
+                    himi_js.touches[e.pointerId] = {x: pos.x, y: pos.y};
+                });
+
+                this.canvas.addEventListener("pointermove", e => {
+                    if (himi_js.touches[e.pointerId]) {
+                        const pos = this.get_mouse_pos(e);
+                        himi_js.touches[e.pointerId].x = pos.x;
+                        himi_js.touches[e.pointerId].y = pos.y;
+                    }
+                });
+
+                window.addEventListener("pointerup", e => {
+                    delete himi_js.touches[e.pointerId];
+                });
+
+                this.canvas.addEventListener("pointercancel", e => {
+                    delete himi_js.touches[e.pointerId];
+                });
+            },
+
+            //ゲームループ　update関数にはdeltaが渡される
+            loop(update, draw) {
+                let last_time = performance.now();
+                const frame = () => {
+                    const now = performance.now();
+                    const delta = (now - last_time) / 1000;
+                    last_time = now;
+                    //画面サイズが変わっていたらリサイズ
+                    if (window.innerWidth !== this.last_window_width ||
+                        window.innerHeight !== this.last_window_height) {
+                        this.last_window_width = window.innerWidth;
+                        this.last_window_height = window.innerHeight;
+
+                        this.resize_canvas();
+                    }
+                    this.update_gamepad();
+                    update(delta);
+                    draw();
+                    this.mouse_clicked = false;
+                    requestAnimationFrame(frame);
+                }
+                requestAnimationFrame(frame);
+            },
+
+            resize_canvas() {
+                const w = document.documentElement.clientWidth;
+                const h = document.documentElement.clientHeight;
+
+                const scale = Math.min(
+                    w / this.width,
+                    h / this.height
+                );
+
+                this.canvas.style.width = (this.width * scale) + "px";
+                this.canvas.style.height = (this.height * scale) + "px";
+            },
+
+            update_gamepad() {
+                const gp = navigator.getGamepads()[0];
+                if (!gp) return;
+                this.gamepad.buttons = gp.buttons.map(b => b.pressed);
+                this.gamepad.axes = gp.axes;
+            },
+
+            pad_down(button) {
+                const index = this.pad_map[button];
+                if (index === undefined) return false;
+                return this.gamepad.buttons[index] === true;
+            },
+
+            key_down(key) {
+                return this.keys[key] === true;
+            },
+
+            get_mouse_pos(e) {
+                const rect = this.canvas.getBoundingClientRect();
+                const scale_x = this.width / rect.width;
+                const scale_y = this.height / rect.height;
+
+                return {
+                    x: (e.clientX - rect.left) * scale_x,
+                    y: (e.clientY - rect.top) * scale_y
+                };
+            },
+
+            //画面全体塗りつぶし
+            clear_color(color) {
+                this.ctx.fillStyle = color;
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            },
+
+            //画像読み込み
+            load_image(path) {
+                const img = new Image();
+                img.src = path;
+                return img;
+            },
+
+            //画像描画
+            draw_image(img, x, y, w = img.width, h = img.height) {
+                this.ctx.drawImage(img, x, y, w, h);
+            },
+
+            //エリアの位置に画像をかく
+            area_to_image(img, area) {
+                this.ctx.drawImage(img, area.x, area.y, area.w, area.h);
+            },
+
+            draw_text(text, x, y, size = 32, color = "black") {
+                this.ctx.fillStyle = color;
+                this.ctx.font = `${size}px sans-serif`;
+                this.ctx.textAlign = "center"
+                this.ctx.textBaseline = "middle";
+                this.ctx.fillText(text, x, y);
+            },
+
+            draw_line(x1, y1, x2, y2, color = "white", width = 2) {
+                this.ctx.strokeStyle = color;
+                this.ctx.lineWidth = width;
+                this.ctx.beginPath();
+                this.ctx.moveTo(x1, y1);
+                this.ctx.lineTo(x2, y2);
+                this.ctx.stroke();
+            },
+
+            //画像全消去
+            clear() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            },
+
+            //エリア生成
+            area(x, y, w, h) {
+                return {x, y, w, h};
+            },
+
+            //二つの当たり判定が当たっているか調べる
+            collision(area1, area2) {
+                return (
+                    area1.x < area2.x + area2.w &&
+                    area1.x + area1.w > area2.x &&
+                    area1.y < area2.y + area2.h &&
+                    area1.y + area1.h > area2.y
+                )
+            },
+
+            point_area(x, y, area) {
+                return (
+                    x >= area.x &&
+                    x <= area.x + area.w &&
+                    y >= area.y &&
+                    y <= area.y + area.h
+                );
+            },
+
+            rand_int(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+        }
+    </script>
+    <script src="main.js"></script>
+</body>
+</html>
