@@ -100,15 +100,19 @@ class PlayScreen{
 class Game_Over{
     constructor(screen){
         this.screen = screen;
+        this.timer = 0.0;
     }
 
-    update() {
-        if (himi_js.key_down("Enter") || himi_js.pad_down("start") || himi_js.mouse_clicked) {
-            this.screen.screens.play = new PlayScreen(this.screen);
-            this.screen.scene = "play";
+    update(delta) {
+        this.timer += delta;
+        if (this.timer > 1.5) {
+            if (himi_js.key_down("Enter") || himi_js.pad_down("start") || himi_js.mouse_clicked) {
+                this.screen.screens.play = new PlayScreen(this.screen);
+                this.screen.scene = "play";
+            }
         }
     }
-
+    
     draw() {
         himi_js.draw_text(
             "GAME OVER",
@@ -125,19 +129,12 @@ class Game_Over{
             "rgb(255, 255, 255)"
         );
         himi_js.draw_text(
-            "また遊んでね",
-            himi_js.width / 2,
-            himi_js.height / 2 + 150,
-            30,
-            "rgb(255, 255, 255)"
-        )
-        himi_js.draw_text(
             "エンターキーか画面タップまたはスタートボタンで再スタート",
             himi_js.width / 2,
             himi_js.height - 50,
             30,
             "rgb(255, 255, 255)"
-        )
+        );
     }
 }
 
