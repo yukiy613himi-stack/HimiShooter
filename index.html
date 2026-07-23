@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name = "viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="robots" content="noindex, nofollow">
     <style>
         html, body {
             margin: 0;
@@ -19,6 +18,15 @@
             -webkit-text-size-adjust: none;
             text-size-adjust: none;
         }
+        canvas {
+            outline: none;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+        canvas:focus {
+            outline: none;
+        }
         .center {
             display: flex;
             justify-content: center;
@@ -33,6 +41,12 @@
     </div>
     <script>
         "use strict"
+        //スマホの長押しの振動を取り消し
+        const canvas = document.getElementById("canvas");
+        canvas.addEventListener("contextmenu", e => e.preventDefault());
+        canvas.addEventListener("touchstart", e => e.preventDefault());
+        canvas.addEventListener("touchend", e => e.preventDefault());
+        canvas.addEventListener("touchmove", e => e.preventDefault());
         const himi_js = {
             canvas: null,
             ctx: null,
