@@ -2,6 +2,7 @@ class Main {
     constructor() {
         himi_js.init(850, 1500, "HimiShooter");
         this.scene = "title";
+        himi_js.set_font("")
         this.screens = {
             title: new TitleScreen(this),
             play: new PlayScreen(this),
