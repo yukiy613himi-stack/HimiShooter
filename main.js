@@ -41,18 +41,23 @@ class PlayScreen{
         this.screen = screen;
         this.score = 0;
         this.spawn_timer = 0;
+        this.messege = "";
+        this.next_level_up_score = 1000;
+        this.next_live_up_score = 5000;
         this.under_line = himi_js.height - 350;
         this.bullet_line_left = himi_js.width / 2 - 150;
         this.bullet_line_right = himi_js.width / 2 + 150;
         this.player = new Player(this);
         this.player_bullet = new Player_Bullet(this);
         this.enemys = [];
+        this.messege_timer = 0;
         this.enemy_bullets = [];
+        this.level = 1;
     }
 
     spawn_enemy(delta) {
         this.spawn_timer += delta;
-        if (this.spawn_timer > 2.5) {
+        if (this.spawn_timer > 3.7 - this.level / 2.7) {
             if (himi_js.rand_int(0, 30) != 0){
                 if (himi_js.rand_int(0, 2) != 0){
                     this.enemys.push(new Tuna(this, himi_js.rand_int(0, himi_js.width - 80), 0));
@@ -90,9 +95,31 @@ class PlayScreen{
         for (let i = this.enemy_bullets.length - 1; i >= 0; i--) {
             this.enemy_bullets[i].draw()
         }
-    }    
+    }
+
+    draw_messege(messege){
+        this.messege = messege;
+        this.messege_timer = 1;
+    }
+
+    delete_messege() {
+        this.messege = ""
+    }
     
     update(delta) {
+        this.messege_timer -= delta;
+        if (this.messege_timer < 0) {
+            this.delete_messege()
+        }
+        if (this.score > this.next_level_up_score) {
+            this.draw_messege("レベルアップ!!");
+            this.level++;
+            this.next_level_up_score += 1000;
+        }
+        if (this.score > this.next_live_up_score) {
+            this.player.lives += 1;
+            this.next_live_up_score += 5000;
+        }
         this.spawn_enemy(delta);
         this.enemes_update(delta);
         this.bullet_update(delta);
@@ -109,6 +136,7 @@ class PlayScreen{
         himi_js.draw_rect(this.bullet_line_right, this.under_line, himi_js.width - this.bullet_line_right, himi_js.height - this.under_line, "rgb(0, 16, 193)")
         himi_js.draw_text(`SCORE: ${this.score}`, himi_js.width / 2, himi_js.height - 150, 40, "white");
         himi_js.draw_text(`PLAYER: ${this.player.lives}`, himi_js.width / 2, himi_js.height - 70, 30, "white");
+        himi_js.draw_text(`${this.messege}`, himi_js.width / 2, himi_js.height / 2, 100, "rgb(255, 234, 0)")
         himi_js.draw_line(0, this.under_line, himi_js.width, this.under_line, "white", 5);
     }
 }
