@@ -204,14 +204,18 @@ class Player{
         }
 
         //ゲームパッド
-        if (himi_js.pad_down("right")){
-            this.area.x += this.speed * delta;
-        }
-        if (himi_js.pad_down("left")){
-            this.area.x -= this.speed * delta;
-        }
-        if (himi_js.pad_down("a") || himi_js.pad_down("b") || himi_js.pad_down("x") || himi_js.pad_down()){
-            this.shoot();
+        if (himi_js.left_stick().x != 0){
+            this.area.x += himi_js.left_stick().x * this.speed * delta;
+        }else {
+            if (himi_js.pad_down("right")){
+                this.area.x += this.speed * delta;
+            }
+            if (himi_js.pad_down("left")){
+                this.area.x -= this.speed * delta;
+            }
+            if (himi_js.pad_down("a") || himi_js.pad_down("b") || himi_js.pad_down("x") || himi_js.pad_down()){
+                this.shoot();
+            }
         }
 
         //タッチ
