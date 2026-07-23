@@ -275,6 +275,11 @@
                 this.ctx.fillText(text, x, y);
             },
 
+            draw_rect(x, y, w, h, color) {
+                this.ctx.fillStyle = color;
+                this.ctx.fillRect(x, y, w, h);
+            },
+
             draw_line(x1, y1, x2, y2, color = "white", width = 2) {
                 this.ctx.strokeStyle = color;
                 this.ctx.lineWidth = width;
