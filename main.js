@@ -41,6 +41,8 @@ class PlayScreen{
         this.score = 0;
         this.spawn_timer = 0;
         this.under_line = himi_js.height - 350;
+        this.bullet_line_left = himi_js.width / 2 - 150;
+        this.bullet_line_right = himi_js.width / 2 + 150;
         this.player = new Player(this);
         this.player_bullet = new Player_Bullet(this);
         this.enemys = [];
@@ -101,9 +103,14 @@ class PlayScreen{
         this.bullet_draw();
         this.player_bullet.draw();
         this.player.draw();
-        himi_js.draw_text(`←       SCORE: ${this.score}       →`, himi_js.width / 2, himi_js.height - 150, 70, "white");
-        himi_js.draw_text(`PLAYER: ${this.player.lives}`, himi_js.width / 2, himi_js.height - 70, 50, "white");
-        himi_js.draw_line(0, this.under_line, himi_js.width, this.under_line, "white", 5);;
+        himi_js.draw_rect(0, this.under_line, this.bullet_line_left, himi_js.height - this.under_line, "rgb(0, 16, 193)")
+        himi_js.draw_rect(this.bullet_line_left, this.under_line, this.bullet_line_right - this.bullet_line_left, himi_js.height - this.under_line, "rgb(186, 0, 0)");
+        himi_js.draw_rect(this.bullet_line_right, this.under_line, himi_js.width - this.bullet_line_right, himi_js.height - this.under_line, "rgb(0, 16, 193)")
+        himi_js.draw_text(`SCORE: ${this.score}`, himi_js.width / 2, himi_js.height - 150, 50, "white");
+        himi_js.draw_text(`PLAYER: ${this.player.lives}`, himi_js.width / 2, himi_js.height - 70, 30, "white");
+        himi_js.draw_line(this.bullet_line_left, this.under_line, this.bullet_line_left, himi_js.height, "white", 5);
+        himi_js.draw_line(this.bullet_line_right, this.under_line, this.bullet_line_right, himi_js.height, "white", 5);
+        himi_js.draw_line(0, this.under_line, himi_js.width, this.under_line, "white", 5);
     }
 }
 
@@ -213,7 +220,7 @@ class Player{
             const t = himi_js.touches[id];
 
             //玉発射位置がタッチされていたら動かない
-            if (t.y < this.screen.under_line) {
+            if (t.y < this.screen.under_line || t.x > this.screen.bullet_line_left && t.x < this.screen.bullet_line_right) {
                 this.shoot();
                 continue;
             }
