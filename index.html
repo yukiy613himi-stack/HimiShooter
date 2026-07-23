@@ -279,7 +279,7 @@
                     y: this.stick_deadzone(stick.y, dead)
                 }
             },
-            //ここまでやった
+
             right_stick(dead = 0.2) {
                 const stick = {
                     x: this.gamepad.axes[2] || 0,
@@ -297,8 +297,8 @@
 
             get_mouse_pos(e) {
                 const rect = this.canvas.getBoundingClientRect();
-                const scale_x = this.width / rect.width;
-                const scale_y = this.height / rect.height;
+                const scale_x = this.width() / rect.width;
+                const scale_y = this.height() / rect.height;
 
                 return {
                     x: (e.clientX - rect.left) * scale_x,
