@@ -177,29 +177,46 @@
                 });
 
                 //マルチタップ対応
-                himi_js.touches = {};
+                this.touches = {};
 
                 this.canvas.addEventListener("pointerdown", e => {
                     const pos = this.get_mouse_pos(e);
-                    himi_js.touches[e.pointerId] = {x: pos.x, y: pos.y};
+                    this.touches[e.pointerId] = {x: pos.x, y: pos.y};
                 });
 
                 this.canvas.addEventListener("pointermove", e => {
-                    if (himi_js.touches[e.pointerId]) {
+                    if (this.touches[e.pointerId]) {
                         const pos = this.get_mouse_pos(e);
-                        himi_js.touches[e.pointerId].x = pos.x;
-                        himi_js.touches[e.pointerId].y = pos.y;
+                        this.touches[e.pointerId].x = pos.x;
+                        this.touches[e.pointerId].y = pos.y;
                     }
                 });
 
                 window.addEventListener("pointerup", e => {
-                    delete himi_js.touches[e.pointerId];
+                    delete this.touches[e.pointerId];
                 });
 
                 this.canvas.addEventListener("pointercancel", e => {
-                    delete himi_js.touches[e.pointerId];
+                    delete this.touches[e.pointerId];
                 });
             },
+
+            width() {
+                return this.canvas.width;
+            },
+
+            height() {
+                return this.canvas.height;
+            },
+
+            center_x() {
+                return this.canvas.width / 2;
+            },
+
+            center_y() {
+                return this.canvas.height / 2;
+            },
+
 
             //ゲームループ　update関数にはdeltaが渡される
             loop(update, draw) {
@@ -249,6 +266,32 @@
                 const index = this.pad_map[button];
                 if (index === undefined) return false;
                 return this.gamepad.buttons[index] === true;
+            },
+
+            stick_deadzone(value, dead = 0.2) {
+                return Math.abs(value) < dead ? 0 : value;
+            },
+
+            left_stick(dead = 0.2) {
+                const stick = {
+                    x: this.gamepad.axes[0] || 0,
+                    y: this.gamepad.axes[1] || 0
+                }
+                return{
+                    x: this.stick_deadzone(stick.x, dead),
+                    y: this.stick_deadzone(stick.y, dead)
+                }
+            },
+            
+            right_stick(dead = 0.2) {
+                const stick = {
+                    x: this.gamepad.axes[2] || 0,
+                    y: this.gamepad.axes[3] || 0
+                }
+                return{
+                    x: this.stick_deadzone(stick.x, dead),
+                    y: this.stick_deadzone(stick.y, dead)
+                }
             },
 
             key_down(key) {
