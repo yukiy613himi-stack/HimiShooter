@@ -15,7 +15,7 @@ class Main {
     }
 
     draw() {
-        himi_js.clear_color("rgb(0, 6, 71)")
+        himi_js.clear_color("rgb(35, 8, 130)")
         this.screens[this.scene].draw();
     }
 }
@@ -106,10 +106,8 @@ class PlayScreen{
         himi_js.draw_rect(0, this.under_line, this.bullet_line_left, himi_js.height - this.under_line, "rgb(0, 16, 193)")
         himi_js.draw_rect(this.bullet_line_left, this.under_line, this.bullet_line_right - this.bullet_line_left, himi_js.height - this.under_line, "rgb(186, 0, 0)");
         himi_js.draw_rect(this.bullet_line_right, this.under_line, himi_js.width - this.bullet_line_right, himi_js.height - this.under_line, "rgb(0, 16, 193)")
-        himi_js.draw_text(`SCORE: ${this.score}`, himi_js.width / 2, himi_js.height - 150, 50, "white");
+        himi_js.draw_text(`SCORE: ${this.score}`, himi_js.width / 2, himi_js.height - 150, 40, "white");
         himi_js.draw_text(`PLAYER: ${this.player.lives}`, himi_js.width / 2, himi_js.height - 70, 30, "white");
-        himi_js.draw_line(this.bullet_line_left, this.under_line, this.bullet_line_left, himi_js.height, "white", 5);
-        himi_js.draw_line(this.bullet_line_right, this.under_line, this.bullet_line_right, himi_js.height, "white", 5);
         himi_js.draw_line(0, this.under_line, himi_js.width, this.under_line, "white", 5);
     }
 }
