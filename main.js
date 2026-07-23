@@ -31,8 +31,8 @@ class TitleScreen{
         }
     }
     draw() {
-        himi_js.draw_text("Himi Shooter", himi_js.width / 2, himi_js.height / 2, 130, "rgb(227, 147, 0)");
-        himi_js.draw_text("エンターキーか画面タップまたはスタートボタンでスタート", himi_js.width / 2, himi_js.height / 2 + 200, 30, "rgb(227, 147, 0)");
+        himi_js.draw_text("Himi Shooter", himi_js.width() / 2, himi_js.height() / 2, 130, "rgb(227, 147, 0)");
+        himi_js.draw_text("エンターキーか画面タップまたはスタートボタンでスタート", himi_js.width() / 2, himi_js.height() / 2 + 200, 30, "rgb(227, 147, 0)");
     }
 }
 
@@ -44,9 +44,9 @@ class PlayScreen{
         this.messege = "";
         this.next_level_up_score = 1000;
         this.next_live_up_score = 5000;
-        this.under_line = himi_js.height - 350;
-        this.bullet_line_left = himi_js.width / 2 - 150;
-        this.bullet_line_right = himi_js.width / 2 + 150;
+        this.under_line = himi_js.height() - 350;
+        this.bullet_line_left = himi_js.width() / 2 - 150;
+        this.bullet_line_right = himi_js.width() / 2 + 150;
         this.player = new Player(this);
         this.player_bullet = new Player_Bullet(this);
         this.enemys = [];
@@ -57,19 +57,28 @@ class PlayScreen{
 
     spawn_enemy(delta) {
         this.spawn_timer += delta;
-        if (this.spawn_timer > 3.7 - this.level / 2.7) {
-            if (himi_js.rand_int(0, 30) != 0){
-                if (himi_js.rand_int(0, 2) != 0){
-                    this.enemys.push(new Tuna(this, himi_js.rand_int(0, himi_js.width - 80), 0));
-                }else if (himi_js.rand_int(0, 1) == 0){
-                    this.enemys.push(new Jellyfish(this, himi_js.rand_int(0, himi_js.width - 80), 0));
-                }else{
-                    this.enemys.push(new Sea_urchin(this, himi_js.rand_int(0, himi_js.width - 80), 0));
+        if (this.spawn_timer > Math.max(0.5, 3 - this.level * 0.25)){
+            if (this.level <= 2) {
+                this.spawn_nomal_enemy();
+            } else {
+                if (himi_js.rand_int(0, 10) == 0) {
+                    this.enemys.push(new mantis_shrimp(this, himi_js.rand_int(0, himi_js.width() - 80), 0));
+                } else {
+                    this.spawn_nomal_enemy();
                 }
-            }else {
-                this.enemys.push(new mantis_shrimp(this, himi_js.rand_int(0, himi_js.width - 80), 0));
             }
             this.spawn_timer = 0;
+        }
+    }
+    
+
+    spawn_nomal_enemy() {
+        if (himi_js.rand_int(0, 2) != 0){
+            this.enemys.push(new Tuna(this, himi_js.rand_int(0, himi_js.width() - 80), 0));
+        }else if (himi_js.rand_int(0, 1) == 0){
+            this.enemys.push(new Jellyfish(this, himi_js.rand_int(0, himi_js.width() - 80), 0));
+        }else{
+            this.enemys.push(new Sea_urchin(this, himi_js.rand_int(0, himi_js.width() - 80), 0));
         }
     }
 
@@ -107,6 +116,9 @@ class PlayScreen{
     }
     
     update(delta) {
+        if (this.score > 9999999) {
+            this.score = 9999999
+        }
         this.messege_timer -= delta;
         if (this.messege_timer < 0) {
             this.delete_messege()
@@ -131,13 +143,13 @@ class PlayScreen{
         this.bullet_draw();
         this.player_bullet.draw();
         this.player.draw();
-        himi_js.draw_rect(0, this.under_line, this.bullet_line_left, himi_js.height - this.under_line, "rgb(0, 16, 193)")
-        himi_js.draw_rect(this.bullet_line_left, this.under_line, this.bullet_line_right - this.bullet_line_left, himi_js.height - this.under_line, "rgb(186, 0, 0)");
-        himi_js.draw_rect(this.bullet_line_right, this.under_line, himi_js.width - this.bullet_line_right, himi_js.height - this.under_line, "rgb(0, 16, 193)")
-        himi_js.draw_text(`SCORE: ${this.score}`, himi_js.width / 2, himi_js.height - 150, 40, "white");
-        himi_js.draw_text(`PLAYER: ${this.player.lives}`, himi_js.width / 2, himi_js.height - 70, 30, "white");
-        himi_js.draw_text(`${this.messege}`, himi_js.width / 2, himi_js.height / 2, 100, "rgb(255, 234, 0)")
-        himi_js.draw_line(0, this.under_line, himi_js.width, this.under_line, "white", 5);
+        himi_js.draw_rect(0, this.under_line, this.bullet_line_left, himi_js.height() - this.under_line, "rgb(0, 16, 193)")
+        himi_js.draw_rect(this.bullet_line_left, this.under_line, this.bullet_line_right - this.bullet_line_left, himi_js.height() - this.under_line, "rgb(186, 0, 0)");
+        himi_js.draw_rect(this.bullet_line_right, this.under_line, himi_js.width() - this.bullet_line_right, himi_js.height() - this.under_line, "rgb(0, 16, 193)")
+        himi_js.draw_text(`SCORE: ${this.score}`, himi_js.width() / 2, himi_js.height() - 150, 40, "white");
+        himi_js.draw_text(`PLAYER: ${this.player.lives}`, himi_js.width() / 2, himi_js.height() - 70, 30, "white");
+        himi_js.draw_text(`${this.messege}`, himi_js.width() / 2, himi_js.height() / 2, 100, "rgb(255, 234, 0)")
+        himi_js.draw_line(0, this.under_line, himi_js.width(), this.under_line, "white", 5);
     }
 }
 
@@ -160,22 +172,22 @@ class Game_Over{
     draw() {
         himi_js.draw_text(
             "GAME OVER",
-            himi_js.width / 2,
-            himi_js.height / 2 - 250,
+            himi_js.width() / 2,
+            himi_js.height() / 2 - 250,
             130,
             "rgb(255, 0, 0)"
         );
         himi_js.draw_text(
             `今回の点数は${this.screen.screens.play.score}点でした`,
-            himi_js.width / 2,
-            himi_js.height / 2 - 50,
+            himi_js.width() / 2,
+            himi_js.height() / 2 - 50,
             50,
             "rgb(255, 255, 255)"
         );
         himi_js.draw_text(
             "エンターキーか画面タップまたはスタートボタンで再スタート",
-            himi_js.width / 2,
-            himi_js.height - 50,
+            himi_js.width() / 2,
+            himi_js.height() - 50,
             30,
             "rgb(255, 255, 255)"
         );
@@ -186,7 +198,7 @@ class Player{
     constructor(screen) {
         this.screen = screen;
         this.area = himi_js.area(
-            himi_js.width / 2 - 100 / 2,
+            himi_js.width() / 2 - 100 / 2,
             this.screen.under_line - 70,
             100,
             70
@@ -256,7 +268,7 @@ class Player{
                 continue;
             }
             
-            if (t.x > himi_js.width / 2) {
+            if (t.x > himi_js.width() / 2) {
                 this.area.x += this.speed * delta;
             }else {
                 this.area.x -= this.speed * delta;
@@ -265,8 +277,8 @@ class Player{
         if (this.area.x < 0) {
             this.area.x = 0
         }
-        if (this.area.x + this.area.w > himi_js.width) {
-            this.area.x = himi_js.width - this.area.w;
+        if (this.area.x + this.area.w > himi_js.width()) {
+            this.area.x = himi_js.width() - this.area.w;
         }
     }
 
@@ -344,7 +356,7 @@ class Tuna{
             }
             if (this.area.x < 0) {
                 this.move_right = true;
-            }else if (this.area.x + this.area.w > himi_js.width){
+            }else if (this.area.x + this.area.w > himi_js.width()){
                 this.move_right = false;
             }
         }
@@ -424,7 +436,7 @@ class Sea_urchin{
             }
             if (this.area.x < 0) {
                 this.move_right = true;
-            }else if (this.area.x + this.area.w > himi_js.width){
+            }else if (this.area.x + this.area.w > himi_js.width()){
                 this.move_right = false;
             }
         }
@@ -506,7 +518,7 @@ class Jellyfish{
             }
             if (this.area.x < 0) {
                 this.move_right = true;
-            }else if (this.area.x + this.area.w > himi_js.width){
+            }else if (this.area.x + this.area.w > himi_js.width()){
                 this.move_right = false;
             }
         }
@@ -584,7 +596,7 @@ class mantis_shrimp{
             }
             if (this.area.x < 0) {
                 this.move_right = true;
-            }else if (this.area.x + this.area.w > himi_js.width){
+            }else if (this.area.x + this.area.w > himi_js.width()){
                 this.move_right = false;
             }
         }
