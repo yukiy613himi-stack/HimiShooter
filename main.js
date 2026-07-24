@@ -162,7 +162,7 @@ class Game_Over{
 
     update(delta) {
         this.timer += delta;
-        if (this.timer > 1.5) {
+        if (this.timer > 2) {
             if (himi_js.key_down("Enter") || himi_js.pad_down("start") || himi_js.mouse_clicked) {
                 this.screen.screens.play = new PlayScreen(this.screen);
                 this.screen.scene = "play";
