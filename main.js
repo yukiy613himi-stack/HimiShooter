@@ -159,6 +159,9 @@ class PlayScreen{
         himi_js.draw_rect(this.bullet_line_left, this.under_line, this.bullet_line_right - this.bullet_line_left, himi_js.height() - this.under_line, this.player.can_shoot ? "rgb(186, 0, 0)" : "rgb(105, 0, 0)");
         himi_js.draw_rect(this.bullet_line_right, this.under_line, himi_js.width() - this.bullet_line_right, himi_js.height() - this.under_line, "rgb(0, 16, 193)")
         himi_js.draw_text(`SCORE: ${this.score}`, himi_js.width() / 2, himi_js.height() - 300, 40, "white");
+        himi_js.draw_text("shoot", himi_js.center_x(), himi_js.height() - 170, 70, this.player.can_shoot ? "white" : "rgb(84, 84, 84)")
+        himi_js.draw_text("←", himi_js.center_x() - 300, himi_js.height() - 170, 70, "white")
+        himi_js.draw_text("→", himi_js.center_x() + 300, himi_js.height() - 170, 70, "white")
         himi_js.draw_text(`PLAYER: ${this.player.lives}`, himi_js.width() / 2, himi_js.height() - 20, 30, "white");
         himi_js.draw_text(`LEVEL: ${this.level}`, himi_js.width() / 2, himi_js.height() - 50, 30, "white");
         himi_js.draw_text(`${this.messege}`, himi_js.width() / 2, himi_js.height() / 2, 100, "rgb(255, 234, 0)");
