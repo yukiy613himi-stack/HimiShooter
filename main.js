@@ -6,7 +6,7 @@ class Main {
         this.screens = {
             title: new TitleScreen(this),
             play: new PlayScreen(this),
-            gameover: new Game_Over(this)
+            gameover: null
         };
         himi_js.loop(this.update.bind(this), this.draw.bind(this));
     }
@@ -162,7 +162,7 @@ class Game_Over{
 
     update(delta) {
         this.timer += delta;
-        if (this.timer > 2) {
+        if (this.timer > 2.5) {
             if (himi_js.key_down("Enter") || himi_js.pad_down("start") || himi_js.mouse_clicked) {
                 this.screen.screens.play = new PlayScreen(this.screen);
                 this.screen.scene = "play";
@@ -223,6 +223,7 @@ class Player{
         if (this.invincible_timer > 0) return;
         this.lives -= 1;
         if (this.lives < 0) {
+            this.screen.screen.screens.gameover = new Game_Over(this.screen.screen)
             this.screen.screen.scene = "gameover";
         }
         this.invincible_timer = 1.5;
