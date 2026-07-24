@@ -42,7 +42,7 @@ class PlayScreen{
         this.score = 0;
         this.spawn_timer = 0;
         this.messege = "";
-        this.next_level_up_score = 1000;
+        this.next_level_up_score = 2000;
         this.next_live_up_score = 5000;
         this.under_line = himi_js.height() - 350;
         this.bullet_line_left = himi_js.width() / 2 - 150;
@@ -52,12 +52,24 @@ class PlayScreen{
         this.enemys = [];
         this.messege_timer = 0;
         this.enemy_bullets = [];
+        this.bullet_interval = 3;
         this.level = 1;
     }
 
     spawn_enemy(delta) {
         this.spawn_timer += delta;
-        if (this.spawn_timer > Math.max(0.5, 3 - this.level * 0.25)){
+        let spawn_interval;
+
+        if (this.level < 10) {
+            spawn_interval = 3 - this.level * 0.1
+        }else if (this.level < 20) {
+            spawn_interval = 2.1 - (this.level - 10) * (1.4 / 19);
+        }else {
+            spawn_interval = 0.7;
+            this.bullet_interval = Math.max(0.7, 3 - (this.level - 30) * 0.1);
+        }
+
+        if (this.spawn_timer > spawn_interval){
             if (this.level <= 2) {
                 this.spawn_nomal_enemy();
             } else {
@@ -123,12 +135,12 @@ class PlayScreen{
         if (this.messege_timer < 0) {
             this.delete_messege()
         }
-        if (this.score > this.next_level_up_score) {
+        if (this.score >= this.next_level_up_score) {
             this.draw_messege("レベルアップ!!");
             this.level++;
             this.next_level_up_score += 1000;
         }
-        if (this.score > this.next_live_up_score) {
+        if (this.score >= this.next_live_up_score) {
             this.player.lives += 1;
             this.next_live_up_score += 5000;
         }
@@ -363,10 +375,10 @@ class Tuna{
             }
         }
         //弾発射処理
-        this.shoot_timer -= delta;
-        if (this.shoot_timer <= 0 && this.explosion_timer == null) {
+        this.shoot_timer += delta;
+        if (this.shoot_timer >= this.screen.bullet_interval && this.explosion_timer == null) {
             this.shoot();
-            this.shoot_timer = himi_js.rand_int(2500, 4500) / 1000
+            this.shoot_timer = 0;
         }
         //プレイヤーの弾に当たった時の処理
         if (himi_js.collision(this.area, this.screen.player_bullet.area) && this.explosion_timer == null) {
@@ -443,10 +455,10 @@ class Sea_urchin{
             }
         }
         //弾発射処理
-        this.shoot_timer -= delta;
-        if (this.shoot_timer <= 0 && this.explosion_timer == null) {
+        this.shoot_timer += delta;
+        if (this.shoot_timer >= this.screen.bullet_interval && this.explosion_timer == null) {
             this.shoot();
-            this.shoot_timer = himi_js.rand_int(2500, 4500) / 1000
+            this.shoot_timer = 0;
         }
         //プレイヤーの弾に当たった時の処理
         if (himi_js.collision(this.area, this.screen.player_bullet.area) && this.explosion_timer == null) {
@@ -525,10 +537,10 @@ class Jellyfish{
             }
         }
         //弾発射処理
-        this.shoot_timer -= delta;
-        if (this.shoot_timer <= 0 && this.explosion_timer == null) {
+        this.shoot_timer += delta;
+        if (this.shoot_timer >= this.screen.bullet_interval && this.explosion_timer == null) {
             this.shoot();
-            this.shoot_timer = himi_js.rand_int(2500, 4500) / 1000
+            this.shoot_timer = 0;
         }
         //プレイヤーの弾に当たった時の処理
         if (himi_js.collision(this.area, this.screen.player_bullet.area) && this.explosion_timer == null) {
@@ -603,10 +615,10 @@ class mantis_shrimp{
             }
         }
         //弾発射処理
-        this.shoot_timer -= delta;
-        if (this.shoot_timer <= 0 && this.explosion_timer == null) {
+        this.shoot_timer += delta;
+        if (this.shoot_timer >= this.screen.bullet_interval && this.explosion_timer == null) {
             this.shoot();
-            this.shoot_timer = himi_js.rand_int(2500, 4500) / 1000
+            this.shoot_timer = 0;
         }
         //プレイヤーの弾に当たった時の処理
         if (himi_js.collision(this.area, this.screen.player_bullet.area) && this.explosion_timer == null) {
