@@ -8,6 +8,7 @@ class Main {
             play: new PlayScreen(this),
             gameover: null
         };
+        himi_js.preload_folder(["bullet.png", "explosion.png", "jellyfish_bullet.png", "jellyfish", "mantis_shrimp.png", "player.png", "sea_urchin_bullet.png", "sea_urchin_bullet.png", "super_tuna.png", "tuna_bullet.png", "tuna.png"], "assets")
         himi_js.loop(this.update.bind(this), this.draw.bind(this));
     }
 
