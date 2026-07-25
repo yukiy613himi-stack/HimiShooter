@@ -312,6 +312,16 @@
                 this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
             },
 
+            //画像読み込みを先にしておいて次の読み込みを早める
+            preload_folder(file_list, folder) {
+                const useFolder = folder && folder.length > 0;
+
+                for (const file of file_list) {
+                    const img = new Image();
+                    img.src = useFolder ? (folder + "/" + file) : file;
+                }
+            },
+
             //画像読み込み
             load_image(path) {
                 const img = new Image();
