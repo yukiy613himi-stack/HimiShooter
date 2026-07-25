@@ -712,7 +712,7 @@ class Enemy_Bullet {
         this.area.y += this.speed.y * delta;
 
         //プレイヤーに当たった時の処理
-        if (himi_js.collision(this.area, this.screen.player.area) && this.explosion_timer == null) {
+        if (himi_js.collision(this.area, this.screen.player.area)) {
             this.screen.player.take_damage();
             const index = this.screen.enemy_bullets.indexOf(this);
             if (index !== -1) {
@@ -720,7 +720,7 @@ class Enemy_Bullet {
             }
         }
         //消す処理
-        if (this.explosion_timer <= 0 && this.explosion_timer != null || this.area.y + this.area.h > this.screen.under_line) {
+        if (this.explosion_timer <= 0 || this.area.y + this.area.h > this.screen.under_line) {
             const index = this.screen.enemy_bullets.indexOf(this);
             if (index !== -1) {
                 this.screen.enemy_bullets.splice(index, 1);
