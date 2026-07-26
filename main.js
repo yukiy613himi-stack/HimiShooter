@@ -189,18 +189,20 @@ class Game_Over{
         this.score = this.screen.screens.play.score;
         this.player_title; //titleは称号という意味でもある
 
-        if (this.score >= 100000) {
-            this.player_title = "神シューター";
-        } else if (this.score == 73000){
+        if (this.score == 7300){
+            this.player_title = "ひみシューター";
+        }else if (this.score == 73000){
             this.player_title = "スーパーひみシューター";
+        }else if (this.score >= 100000) {
+            this.player_title = "神シューター";
+        } else if (this.score >= 70000){
+            this.player_title = "やばいシューター"
         } else if (this.score >= 50000){
-            this.player_title = "スーパーシューター";
-        } else if (this.score >= 30000){
             this.player_title = "すごいシューター";
+        } else if (this.score >= 30000){
+            this.player_title = "つよいシューター";
         } else if (this.score >= 10000){
             this.player_title = "普通のシューター";
-        } else if (this.score == 7300){
-            this.player_title = "ひみシューター";
         } else if (this.score >= 500){
             this.player_title = "初心者シューター";
         } else if (this.score >= 1){
