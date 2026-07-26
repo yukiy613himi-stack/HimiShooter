@@ -195,7 +195,9 @@ class Game_Over{
             this.player_title = "スーパーひみシューター";
         } else if (this.score == 730000){
             this.player_title = "ハイパーひみシューター"
-        } else if (this.score >= 100000) {
+        } else if (this.score == 737300){
+            this.player_title = "ひみひみシューター"
+        } else if (this.score >= 100000){
             this.player_title = "神シューター";
         } else if (this.score >= 70000){
             this.player_title = "やばいシューター"
@@ -243,7 +245,7 @@ class Game_Over{
             `今回の称号:  ${this.player_title}`,
             himi_js.center_x(),
             himi_js.center_y() + 50,
-            50,
+            45,
             "rgb(255, 255, 255)"
         )
         himi_js.draw_text(
