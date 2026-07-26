@@ -191,9 +191,11 @@ class Game_Over{
 
         if (this.score == 7300){
             this.player_title = "ひみシューター";
-        }else if (this.score == 73000){
+        } else if (this.score == 73000){
             this.player_title = "スーパーひみシューター";
-        }else if (this.score >= 100000) {
+        } else if (this.score == 730000){
+            this.player_title = "ハイパーひみシューター"
+        } else if (this.score >= 100000) {
             this.player_title = "神シューター";
         } else if (this.score >= 70000){
             this.player_title = "やばいシューター"
