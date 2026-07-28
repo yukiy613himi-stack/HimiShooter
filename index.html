@@ -208,8 +208,8 @@
                         // ずっと読み取り続ける
                         this.reader.onreading = e => {
                             // 読み取ったテキストを変数に入れるだけ
-                            this.NFC_text = new TextDecoder().decode(e.message.records[0].data);
-                            console.log("NFC:", this.NFC_text);
+                            this.NFC = new TextDecoder().decode(e.message.records[0].data);
+                            console.log("NFC:", this.NFC);
                         };
 
                     }).catch(err => {
@@ -219,7 +219,7 @@
             },
 
             NFC_text() {
-                return this.NFC_text;
+                return this.NFC;
             },
 
             width() {
