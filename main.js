@@ -35,7 +35,7 @@ class TitleScreen{
             const x = himi_js.mouse.x;
             this.left = false;
             this.right = false;
-            for (id of himi_js.touches) {
+            for (const id in himi_js.touches) {
                 const pos = himi_js.get_touch_pos(id)
                 if (!pos) continue;
                 if (pos.x < 100) this.left = true;
