@@ -50,7 +50,7 @@ class TitleScreen{
             this.screen.himi_mode = true;
         }
 
-        if (himi_js.key_down("Enter") || himi_js.pad_down("start") || himi_js.is_clicked() && !(this.left && this.right)) {
+        if (himi_js.key_down("Enter") || himi_js.pad_down("start") || himi_js.is_clicked() && !(this.left || this.right)) {
             this.screen.scene = "play";
         }
     }
