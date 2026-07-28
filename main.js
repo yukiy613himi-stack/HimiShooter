@@ -329,7 +329,7 @@ class Player{
             if (himi_js.pad_down("left")){
                 this.area.x -= this.speed * delta;
             }
-            if (himi_js.pad_down("a") || himi_js.pad_down("b") || himi_js.pad_down("x") || himi_js.pad_down()){
+            if (himi_js.pad_down("a") || himi_js.pad_down("b") || himi_js.pad_down("x") || himi_js.pad_down("y")){
                 this.shoot();
             }
         }
@@ -737,7 +737,7 @@ class Enemy_Bullet {
             }
         }
         //消す処理
-        if (this.explosion_timer <= 0 || this.area.y + this.area.h > this.screen.under_line) {
+        if (this.area.y + this.area.h > this.screen.under_line) {
             const index = this.screen.enemy_bullets.indexOf(this);
             if (index !== -1) {
                 this.screen.enemy_bullets.splice(index, 1);
