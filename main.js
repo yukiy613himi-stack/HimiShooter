@@ -35,10 +35,10 @@ class TitleScreen{
             const x = himi_js.mouse.x;
 
             // 左側タップ
-            this.left = x < 300;
+            this.left = x < 100;
 
             // 右側タップ
-            this.right = x >= himi_js.width() - 300;
+            this.right = x >= himi_js.width() - 100;
 
             // 2本指で左右同時タップされた場合
             if (this.left && this.right) {
