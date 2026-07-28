@@ -26,6 +26,9 @@ class TitleScreen{
         this.screen = screen;
     }
     update(delta) {
+        if (himi_js.NFC_text == "737373") {
+            location.href = location.pathname + "?mode=himi";
+        }
         if (himi_js.key_down("Enter") || himi_js.pad_down("start") || himi_js.mouse_clicked) {
             this.screen.scene = "play"
         }
@@ -55,6 +58,8 @@ class PlayScreen{
         this.enemy_bullets = [];
         this.bullet_interval = 3;
         this.level = 1;
+        this.params = new URLSearchParams(location.search);
+        this.status = this.params.get("mode");
     }
 
     spawn_enemy(delta) {
@@ -268,10 +273,15 @@ class Player{
         );
         this.lives = 2;
         this.can_shoot = true;
-        this.image = himi_js.load_image("assets/player.png");
+        this.image = himi_js.load_image("player.png");
         this.speed = 300;
-        this.bullet_speed = 500;
-        this.bullet_size = 1;
+        if (this.screen.status === "himi") {
+            this.bullet_size = 2;
+            this.bullet_speed = 1000;
+        }else {
+            this.bullet_size = 1;
+            this.bullet_speed = 500;
+        }
         this.invincible_timer = 0;
     }
 
@@ -294,6 +304,7 @@ class Player{
     }
 
     update(delta) {
+        console.log("status:", this.status);
         //無敵タイマーを減らす
         if (this.invincible_timer > 0) {
             this.invincible_timer -= delta;
@@ -361,12 +372,13 @@ class Player_Bullet{
     constructor(screen) {
         this.screen = screen;
         this.area = himi_js.area(30, 70, 30, 70);
-        this.image = himi_js.load_image("assets/bullet.png");
+        this.image = himi_js.load_image("bullet.png");
     }
 
     update(delta) {
         this.area.w = 30 * this.screen.player.bullet_size;
         this.area.h = 70 * this.screen.player.bullet_size;
+        
         if (!this.screen.player.can_shoot) {
             this.area.y -= this.screen.player.bullet_speed * delta;
         }
@@ -391,7 +403,7 @@ class Tuna{
         this.screen = screen;
         this.point = 100;
         this.area = himi_js.area(x, y, 80, 130);
-        this.image = himi_js.load_image("assets/tuna.png");
+        this.image = himi_js.load_image("tuna.png");
         this.explosion_timer = null;
         if (himi_js.rand_int(0, 1) == 0){
             this.move_right = false;
@@ -409,7 +421,7 @@ class Tuna{
                 this.move_right = true;
             }
         }
-        this.screen.enemy_bullets.push(new Enemy_Bullet(this.screen, himi_js.load_image("assets/tuna_bullet.png"), this.area.x + this.area.w / 2, this.area.y + this.area.h, 0, 300))
+        this.screen.enemy_bullets.push(new Enemy_Bullet(this.screen, himi_js.load_image("tuna_bullet.png"), this.area.x + this.area.w / 2, this.area.y + this.area.h, 0, 300))
     }
 
     update(delta){
@@ -435,16 +447,16 @@ class Tuna{
         }
         //プレイヤーの弾に当たった時の処理
         if (himi_js.collision(this.area, this.screen.player_bullet.area) && this.explosion_timer == null) {
-            this.screen.score += this.point;
+            this.screen.score += this.screen.status=== "himi" ? this.point * 2 : this.point;
             this.explosion_timer = 0.3;
             this.screen.player.can_shoot = true;
-            this.image = himi_js.load_image("assets/explosion.png");
+            this.image = himi_js.load_image("explosion.png");
         }
         //プレイヤーに当たった時の処理
         if (himi_js.collision(this.area, this.screen.player.area) && this.explosion_timer == null) {
             this.screen.player.take_damage();
             this.explosion_timer = 0.3;
-            this.image = himi_js.load_image("assets/explosion.png");
+            this.image = himi_js.load_image("explosion.png");
         }
         //消えるまでのタイマーを減らす処理
         if (this.explosion_timer != null) {
@@ -469,7 +481,7 @@ class Sea_urchin{
         this.screen = screen;
         this.point = 300;
         this.area = himi_js.area(x, y, 80, 80);
-        this.image = himi_js.load_image("assets/sea_urchin.png");
+        this.image = himi_js.load_image("sea_urchin.png");
         this.explosion_timer = null;
         if (himi_js.rand_int(0, 1) == 0){
             this.move_right = false;
@@ -487,9 +499,9 @@ class Sea_urchin{
                 this.move_right = true;
             }
         }
-        this.screen.enemy_bullets.push(new Enemy_Bullet(this.screen, himi_js.load_image("assets/sea_urchin_bullet.png"), this.area.x + this.area.w / 2, this.area.y + this.area.h, -150, 300))
-        this.screen.enemy_bullets.push(new Enemy_Bullet(this.screen, himi_js.load_image("assets/sea_urchin_bullet.png"), this.area.x + this.area.w / 2, this.area.y + this.area.h, 0, 300))
-        this.screen.enemy_bullets.push(new Enemy_Bullet(this.screen, himi_js.load_image("assets/sea_urchin_bullet.png"), this.area.x + this.area.w / 2, this.area.y + this.area.h, 150, 300))
+        this.screen.enemy_bullets.push(new Enemy_Bullet(this.screen, himi_js.load_image("sea_urchin_bullet.png"), this.area.x + this.area.w / 2, this.area.y + this.area.h, -150, 300))
+        this.screen.enemy_bullets.push(new Enemy_Bullet(this.screen, himi_js.load_image("sea_urchin_bullet.png"), this.area.x + this.area.w / 2, this.area.y + this.area.h, 0, 300))
+        this.screen.enemy_bullets.push(new Enemy_Bullet(this.screen, himi_js.load_image("sea_urchin_bullet.png"), this.area.x + this.area.w / 2, this.area.y + this.area.h, 150, 300))
     }
 
     update(delta){
@@ -515,16 +527,16 @@ class Sea_urchin{
         }
         //プレイヤーの弾に当たった時の処理
         if (himi_js.collision(this.area, this.screen.player_bullet.area) && this.explosion_timer == null) {
-            this.screen.score += this.point;
+            this.screen.score += this.screen.status=== "himi" ? this.point * 2 : this.point;
             this.explosion_timer = 0.3;
             this.screen.player.can_shoot = true;
-            this.image = himi_js.load_image("assets/explosion.png");
+            this.image = himi_js.load_image("explosion.png");
         }
         //プレイヤーに当たった時の処理
         if (himi_js.collision(this.area, this.screen.player.area) && this.explosion_timer == null) {
             this.screen.player.take_damage();
             this.explosion_timer = 0.3;
-            this.image = himi_js.load_image("assets/explosion.png");
+            this.image = himi_js.load_image("explosion.png");
         }
         //消えるまでのタイマーを減らす処理
         if (this.explosion_timer != null) {
@@ -550,7 +562,7 @@ class Jellyfish{
         this.point = 300;
         this.ammo = 0;
         this.area = himi_js.area(x, y, 80, 80);
-        this.image = himi_js.load_image("assets/jellyfish.png");
+        this.image = himi_js.load_image("jellyfish.png");
         this.explosion_timer = null;
         if (himi_js.rand_int(0, 1) == 0){
             this.move_right = false;
@@ -569,9 +581,9 @@ class Jellyfish{
             }
         }
         this.area.y -= 150
-        this.screen.enemy_bullets.push(new Enemy_Bullet(this.screen, himi_js.load_image("assets/jellyfish_bullet.png"), this.area.x + this.area.w / 2 + 50, this.area.y + this.area.h, 0, 300))
-        this.screen.enemy_bullets.push(new Enemy_Bullet(this.screen, himi_js.load_image("assets/jellyfish_bullet.png"), this.area.x + this.area.w / 2, this.area.y + this.area.h, 0, 300))
-        this.screen.enemy_bullets.push(new Enemy_Bullet(this.screen, himi_js.load_image("assets/jellyfish_bullet.png"), this.area.x + this.area.w / 2 - 50, this.area.y + this.area.h, 0, 300))
+        this.screen.enemy_bullets.push(new Enemy_Bullet(this.screen, himi_js.load_image("jellyfish_bullet.png"), this.area.x + this.area.w / 2 + 50, this.area.y + this.area.h, 0, 300))
+        this.screen.enemy_bullets.push(new Enemy_Bullet(this.screen, himi_js.load_image("jellyfish_bullet.png"), this.area.x + this.area.w / 2, this.area.y + this.area.h, 0, 300))
+        this.screen.enemy_bullets.push(new Enemy_Bullet(this.screen, himi_js.load_image("jellyfish_bullet.png"), this.area.x + this.area.w / 2 - 50, this.area.y + this.area.h, 0, 300))
     }
 
     update(delta){
@@ -597,16 +609,16 @@ class Jellyfish{
         }
         //プレイヤーの弾に当たった時の処理
         if (himi_js.collision(this.area, this.screen.player_bullet.area) && this.explosion_timer == null) {
-            this.screen.score += this.point;
+            this.screen.score += this.screen.status=== "himi" ? this.point * 2 : this.point;
             this.explosion_timer = 0.3;
             this.screen.player.can_shoot = true;
-            this.image = himi_js.load_image("assets/explosion.png");
+            this.image = himi_js.load_image("explosion.png");
         }
         //プレイヤーに当たった時の処理
         if (himi_js.collision(this.area, this.screen.player.area) && this.explosion_timer == null) {
             this.screen.player.take_damage();
             this.explosion_timer = 0.3;
-            this.image = himi_js.load_image("assets/explosion.png");
+            this.image = himi_js.load_image("explosion.png");
         }
         //消えるまでのタイマーを減らす処理
         if (this.explosion_timer != null) {
@@ -631,7 +643,7 @@ class mantis_shrimp{
         this.screen = screen;
         this.point = 500;
         this.area = himi_js.area(x, y, 80, 130);
-        this.image = himi_js.load_image("assets/mantis_shrimp.png");
+        this.image = himi_js.load_image("mantis_shrimp.png");
         this.explosion_timer = null;
         if (himi_js.rand_int(0, 1) == 0){
             this.move_right = false;
@@ -649,7 +661,7 @@ class mantis_shrimp{
                 this.move_right = true;
             }
         }
-        this.screen.enemy_bullets.push(new Enemy_Bullet(this.screen, himi_js.load_image("assets/tuna_bullet.png"), this.area.x + this.area.w / 2, this.area.y + this.area.h, 0, 1500))
+        this.screen.enemy_bullets.push(new Enemy_Bullet(this.screen, himi_js.load_image("tuna_bullet.png"), this.area.x + this.area.w / 2, this.area.y + this.area.h, 0, 1500))
     }
 
     update(delta){
@@ -675,16 +687,16 @@ class mantis_shrimp{
         }
         //プレイヤーの弾に当たった時の処理
         if (himi_js.collision(this.area, this.screen.player_bullet.area) && this.explosion_timer == null) {
-            this.screen.score += this.point;
+            this.screen.score += this.screen.status=== "himi" ? this.point * 2 : this.point;
             this.explosion_timer = 0.3;
             this.screen.player.can_shoot = true;
-            this.image = himi_js.load_image("assets/explosion.png");
+            this.image = himi_js.load_image("explosion.png");
         }
         //プレイヤーに当たった時の処理
         if (himi_js.collision(this.area, this.screen.player.area) && this.explosion_timer == null) {
             this.screen.player.take_damage();
             this.explosion_timer = 0.3;
-            this.image = himi_js.load_image("assets/explosion.png");
+            this.image = himi_js.load_image("explosion.png");
         }
         //消えるまでのタイマーを減らす処理
         if (this.explosion_timer != null) {
@@ -744,7 +756,7 @@ class Super_Tuna{
         this.screen = screen;
         this.point = 1000;
         this.area = himi_js.area(x, y, 80, 130);
-        this.image = himi_js.load_image("assets/super_tuna.png");
+        this.image = himi_js.load_image("super_tuna.png");
         this.explosion_timer = null;
         if (himi_js.rand_int(0, 1) == 0){
             this.move_right = false;
@@ -776,17 +788,17 @@ class Super_Tuna{
             } else if (this.screen.player.bullet_speed == 1000) {
                 this.screen.player.bullet_size = 2;
             } else {
-                this.screen.score += this.point;
+                this.screen.score += this.screen.status=== "himi" ? this.point * 2 : this.point;
             }
             this.explosion_timer = 0.3;
             this.screen.player.can_shoot = true;
-            this.image = himi_js.load_image("assets/explosion.png");
+            this.image = himi_js.load_image("explosion.png");
         }
         //プレイヤーに当たった時の処理
         if (himi_js.collision(this.area, this.screen.player.area) && this.explosion_timer == null) {
             this.screen.player.take_damage();
             this.explosion_timer = 0.3;
-            this.image = himi_js.load_image("assets/explosion.png");
+            this.image = himi_js.load_image("explosion.png");
         }
         //消えるまでのタイマーを減らす処理
         if (this.explosion_timer != null) {
