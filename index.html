@@ -196,6 +196,9 @@
                 this.canvas.addEventListener("pointercancel", e => {
                     delete this.touches[e.pointerId];
                 });
+
+                //NFC読み取り
+                NFC_loading()
             },
 
             NFC_loading() {
