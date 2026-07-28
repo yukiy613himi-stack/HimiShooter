@@ -196,9 +196,6 @@
                 this.canvas.addEventListener("pointercancel", e => {
                     delete this.touches[e.pointerId];
                 });
-
-                //NFC読み取り
-                NFC_loading()
             },
 
             NFC_loading() {
@@ -211,8 +208,8 @@
                         // ずっと読み取り続ける
                         this.reader.onreading = e => {
                             // 読み取ったテキストを変数に入れるだけ
-                            this.NFC = new TextDecoder().decode(e.message.records[0].data);
-                            console.log("NFC:", this.NFC);
+                            himi_js.NFC = new TextDecoder().decode(e.message.records[0].data);
+                            console.log("NFC:", himi_js.NFC);
                         };
 
                     }).catch(err => {
@@ -222,7 +219,7 @@
             },
 
             NFC_text() {
-                return this.NFC;
+                return himi_js.NFC;
             },
 
             width() {
