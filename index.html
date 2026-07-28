@@ -211,8 +211,8 @@
                             const status = data[0];
                             const langLen = status & 0x3F;
                             const textBytes = data.slice(1 + langLen);
-                            this.NFC = new TextDecoder().decode(textBytes);
-                            console.log("NFC:", this.NFC);
+                            himi_js.NFC = new TextDecoder().decode(textBytes);
+                            console.log("NFC:", himi_js.NFC);
                         };
 
                     }).catch(err => {
@@ -222,7 +222,7 @@
             },
 
             NFC_text() {
-                return this.NFC;
+                return himi_js.NFC;
             },
 
             width() {
