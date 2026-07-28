@@ -198,6 +198,30 @@
                 });
             },
 
+            NFC_loading() {
+                if ("NDEFReader" in window) {
+
+                    this.reader = new NDEFReader();
+
+                    this.reader.scan().then(() => {
+
+                        // ずっと読み取り続ける
+                        this.reader.onreading = e => {
+                            // 読み取ったテキストを変数に入れるだけ
+                            this.NFC_text = new TextDecoder().decode(e.message.records[0].data);
+                            console.log("NFC:", this.NFC_text);
+                        };
+
+                    }).catch(err => {
+                        console.log("NFC読み取りエラー:", err);
+                    });
+                }
+            },
+
+            NFC_text() {
+                return this.NFC_text;
+            },
+
             width() {
                 return this.canvas.width;
             },
@@ -213,7 +237,6 @@
             center_y() {
                 return this.canvas.height / 2;
             },
-
 
             //ゲームループ　update関数にはdeltaが渡される
             loop(update, draw) {
