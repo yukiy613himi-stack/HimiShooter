@@ -35,13 +35,13 @@ class TitleScreen{
             const x = himi_js.mouse.x;
 
             // 左側タップ
-            const left = x < himi_js.width() / 2;
+            this.left = x < 300;
 
             // 右側タップ
-            const right = x >= himi_js.width() / 2;
+            this.right = x >= himi_js.width() - 300;
 
             // 2本指で左右同時タップされた場合
-            if (left && right) {
+            if (this.left && this.right) {
                 this.screen.himi_mode = true;
             }
         }
@@ -50,7 +50,7 @@ class TitleScreen{
             this.screen.himi_mode = true;
         }
 
-        if (himi_js.key_down("Enter") || himi_js.pad_down("start") || himi_js.is_clicked()) {
+        if (himi_js.key_down("Enter") || himi_js.pad_down("start") || himi_js.is_clicked() && !(this.left && this.right)) {
             this.screen.scene = "play";
         }
     }
