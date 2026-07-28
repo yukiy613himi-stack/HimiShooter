@@ -207,9 +207,12 @@
 
                         // ずっと読み取り続ける
                         this.reader.onreading = e => {
-                            // 読み取ったテキストを変数に入れるだけ
-                            himi_js.NFC = new TextDecoder().decode(e.message.records[0].data);
-                            console.log("NFC:", himi_js.NFC);
+                            const data = e.message.records[0].data;
+                            const status = data[0];
+                            const langLen = status & 0x3F;
+                            const textBytes = data.slice(1 + langLen);
+                            this.NFC = new TextDecoder().decode(textBytes);
+                            console.log("NFC:", this.NFC);
                         };
 
                     }).catch(err => {
@@ -219,7 +222,7 @@
             },
 
             NFC_text() {
-                return himi_js.NFC;
+                return this.NFC;
             },
 
             width() {
