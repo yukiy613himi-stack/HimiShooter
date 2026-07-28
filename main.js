@@ -27,7 +27,7 @@ class TitleScreen{
         this.screen = screen;
     }
     update(delta) {
-        if (himi_js.NFC_text == "737373") {
+        if (himi_js.NFC_text() == "737373") {
             this.screen.himi_mode = true;
             this.screen.scene = "play";
             return;
