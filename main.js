@@ -304,7 +304,6 @@ class Player{
     }
 
     update(delta) {
-        console.log("status:", this.status);
         //無敵タイマーを減らす
         if (this.invincible_timer > 0) {
             this.invincible_timer -= delta;
