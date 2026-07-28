@@ -9,8 +9,6 @@ class Main {
             play: new PlayScreen(this),
             gameover: null
         };
-        //NFC読み取り
-        himi_js.NFC_loading()
         himi_js.loop(this.update.bind(this), this.draw.bind(this));
     }
 
@@ -29,10 +27,30 @@ class TitleScreen{
         this.screen = screen;
     }
     update(delta) {
-        if (himi_js.NFC_text() == "737373") {
+        if (himi_js.key_down("ArrowLeft") && himi_js.key_down("ArrowRight")) {
             this.screen.himi_mode = true;
         }
-        if (himi_js.key_down("Enter") || himi_js.pad_down("start") || himi_js.mouse_clicked) {
+
+        if (himi_js.is_clicked()) {
+            const x = himi_js.mouse.x;
+
+            // 左側タップ
+            const left = x < himi_js.width() / 2;
+
+            // 右側タップ
+            const right = x >= himi_js.width() / 2;
+
+            // 2本指で左右同時タップされた場合
+            if (left && right) {
+                this.screen.himi_mode = true;
+            }
+        }
+
+        if (himi_js.pad_down("ls") && himi_js.pad_down("rs")) {
+            this.screen.himi_mode = true;
+        }
+
+        if (himi_js.key_down("Enter") || himi_js.pad_down("start") || himi_js.is_clicked()) {
             this.screen.scene = "play";
         }
     }
@@ -145,6 +163,10 @@ class PlayScreen{
     }
     
     update(delta) {
+        if (this.screen.himi_mode) {
+            this.player.bullet_size = 2;
+            this.player.bullet_speed = 1000;
+        }
         if (this.score > 9999999) {
             this.score = 9999999
         }
@@ -159,7 +181,7 @@ class PlayScreen{
         if (this.score >= this.next_level_up_score) {
             this.draw_messege("レベルアップ!!");
             this.level++;
-            this.next_level_up_score += 1000;
+            this.next_level_up_score += this.himi_mode ? 1000 : 2000;
         }
         if (this.score >= this.next_live_up_score) {
             this.player.lives += 1;
@@ -279,13 +301,8 @@ class Player{
         this.can_shoot = true;
         this.image = himi_js.load_image("player.png");
         this.speed = 300;
-        if (this.screen.screen.himi_mode) {
-            this.bullet_size = 2;
-            this.bullet_speed = 1000;
-        }else {
-            this.bullet_size = 1;
-            this.bullet_speed = 500;
-        }
+        this.bullet_size = 1;
+        this.bullet_speed = 500;
         this.invincible_timer = 0;
     }
 
@@ -795,12 +812,6 @@ class Super_Tuna{
             }
             this.explosion_timer = 0.3;
             this.screen.player.can_shoot = true;
-            this.image = himi_js.load_image("explosion.png");
-        }
-        //プレイヤーに当たった時の処理
-        if (himi_js.collision(this.area, this.screen.player.area) && this.explosion_timer == null) {
-            this.screen.player.take_damage();
-            this.explosion_timer = 0.3;
             this.image = himi_js.load_image("explosion.png");
         }
         //消えるまでのタイマーを減らす処理
