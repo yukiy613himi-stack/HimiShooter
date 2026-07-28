@@ -310,6 +310,12 @@
                 };
             },
 
+            get_touch_pos(pointerId) {
+                const touch = this.touches[pointerId];
+                if (!touch) return null;
+                return {x: touch.x, y: touch.y};
+            },
+
             //画面全体塗りつぶし
             clear_color(color) {
                 this.ctx.fillStyle = color;
