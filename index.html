@@ -198,33 +198,6 @@
                 });
             },
 
-            NFC_loading() {
-                if ("NDEFReader" in window) {
-
-                    this.reader = new NDEFReader();
-
-                    this.reader.scan().then(() => {
-
-                        // ずっと読み取り続ける
-                        this.reader.onreading = e => {
-                            const data = e.message.records[0].data;
-                            const status = data[0];
-                            const langLen = status & 0x3F;
-                            const textBytes = data.slice(1 + langLen);
-                            himi_js.NFC = new TextDecoder().decode(textBytes);
-                            console.log("NFC:", himi_js.NFC);
-                        };
-
-                    }).catch(err => {
-                        console.log("NFC読み取りエラー:", err);
-                    });
-                }
-            },
-
-            NFC_text() {
-                return himi_js.NFC;
-            },
-
             width() {
                 return this.canvas.width;
             },
@@ -240,6 +213,7 @@
             center_y() {
                 return this.canvas.height / 2;
             },
+
 
             //ゲームループ　update関数にはdeltaが渡される
             loop(update, draw) {
@@ -319,6 +293,10 @@
 
             key_down(key) {
                 return this.keys[key] === true;
+            },
+
+            is_clicked() {
+                return this.mouse_clicked;
             },
 
             get_mouse_pos(e) {
