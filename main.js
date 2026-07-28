@@ -9,6 +9,8 @@ class Main {
             play: new PlayScreen(this),
             gameover: null
         };
+        //NFC読み取り
+        himi_js.NFC_loading()
         himi_js.loop(this.update.bind(this), this.draw.bind(this));
     }
 
