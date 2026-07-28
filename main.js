@@ -29,9 +29,11 @@ class TitleScreen{
     update(delta) {
         if (himi_js.NFC_text == "737373") {
             this.screen.himi_mode = true;
+            this.screen.scene = "play";
+            return;
         }
         if (himi_js.key_down("Enter") || himi_js.pad_down("start") || himi_js.mouse_clicked) {
-            this.screen.scene = "play"
+            this.screen.scene = "play";
         }
     }
     draw() {
