@@ -4,11 +4,22 @@ class Main {
         this.scene = "title";
         himi_js.set_font("")
         this.himi_mode = false;
+        this.dot_list = [];
         this.screens = {
             title: new TitleScreen(this),
             play: new PlayScreen(this),
             gameover: null
         };
+        for (let i = 0; i < 150; i++) {
+            const color = himi_js.rand_int(195, 200);
+            this.dot_list.push({
+                x: himi_js.rand_int(0, himi_js.width()),
+                y: himi_js.rand_int(0, himi_js.height()),
+                w: himi_js.rand_int(7, 13),
+                h: himi_js.rand_int(7, 13),
+                color: `rgb(${color}, ${color}, ${color})`
+            });
+        }
         himi_js.loop(this.update.bind(this), this.draw.bind(this));
     }
 
@@ -17,7 +28,11 @@ class Main {
     }
 
     draw() {
-        himi_js.clear_color("rgb(35, 8, 130)")
+        himi_js.clear_color("rgb(212, 212, 212)")
+        for (let i = 0; i < this.dot_list.length; i++) {
+            const dot = this.dot_list[i];
+            himi_js.draw_rect(dot.x, dot.y, dot.w, dot.h, dot.color);
+        }
         this.screens[this.scene].draw();
     }
 }
@@ -183,7 +198,7 @@ class PlayScreen{
         if (this.score >= this.next_level_up_score) {
             this.draw_messege("レベルアップ!!");
             this.level++;
-            this.next_level_up_score += this.himi_mode ? 1000 : 2000;
+            this.next_level_up_score += this.himi_mode ? 2000 : 1000;
         }
         if (this.score >= this.next_live_up_score) {
             this.player.lives += 1;
@@ -806,8 +821,10 @@ class Super_Tuna{
         //プレイヤーの弾に当たった時の処理
         if (himi_js.collision(this.area, this.screen.player_bullet.area) && this.explosion_timer == null) {
             if (this.screen.player.bullet_speed == 500) {
+                this.screen.messege("弾速アップ!!");
                 this.screen.player.bullet_speed = 1000;
             } else if (this.screen.player.bullet_speed == 1000) {
+                this.screen.messege("弾の大きさアップ!!");
                 this.screen.player.bullet_size = 2;
             } else {
                 this.screen.score += this.screen.screen.himi_mode ? this.point * 2 : this.point;
