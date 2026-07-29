@@ -210,7 +210,7 @@ class PlayScreen{
         himi_js.draw_text("→", himi_js.center_x() + 300, himi_js.height() - 170, 70, "white")
         himi_js.draw_text(`PLAYER: ${this.player.lives}`, himi_js.width() / 2, himi_js.height() - 20, 30, "white");
         himi_js.draw_text(`LEVEL: ${this.level}`, himi_js.width() / 2, himi_js.height() - 50, 30, "white");
-        himi_js.draw_text(`${this.messege}`, himi_js.width() / 2, himi_js.height() / 2, 100, "rgb(255, 106, 0)");
+        himi_js.draw_text(`${this.messege}`, himi_js.width() / 2, himi_js.height() / 2, 70, "rgb(255, 106, 0)");
         himi_js.draw_line(0, this.under_line, himi_js.width(), this.under_line, "black", 5);
     }
 }
@@ -582,7 +582,7 @@ class Sea_urchin{
 class Jellyfish{
     constructor(screen, x, y){
         this.screen = screen;
-        this.point = 400;
+        this.point = 300;
         this.ammo = 0;
         this.area = himi_js.area(x, y, 80, 80);
         this.image = himi_js.load_image("jellyfish.png");
@@ -809,7 +809,7 @@ class Super_Tuna{
             if (this.screen.player.bullet_speed == 500) {
                 this.screen.draw_messege("弾速アップ!!");
                 this.screen.player.bullet_speed = 1000;
-            } else if (this.screen.player.bullet_speed == 1000) {
+            } else if (this.screen.player.bullet_size == 1) {
                 this.screen.draw_messege("弾の大きさアップ!!");
                 this.screen.player.bullet_size = 2;
             } else {
