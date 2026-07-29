@@ -184,7 +184,7 @@ class PlayScreen{
         if (this.score >= this.next_level_up_score) {
             this.draw_messege("レベルアップ!!");
             this.level++;
-            this.next_level_up_score += this.himi_mode ? 2000 : 1000;
+            this.next_level_up_score += this.screen.himi_mode ? 2000 : 1000;
         }
         if (this.score >= this.next_live_up_score) {
             this.player.lives += 1;
