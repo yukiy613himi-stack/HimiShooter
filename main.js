@@ -352,9 +352,9 @@ class Player{
             if (himi_js.pad_down("left")){
                 this.area.x -= this.speed * delta;
             }
-            if (himi_js.pad_down("a") || himi_js.pad_down("b") || himi_js.pad_down("x") || himi_js.pad_down("y")){
-                this.shoot();
-            }
+        }
+        if (himi_js.pad_down("a") || himi_js.pad_down("b") || himi_js.pad_down("x") || himi_js.pad_down("y")){
+            this.shoot();
         }
 
         //タッチ
