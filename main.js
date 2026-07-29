@@ -582,7 +582,7 @@ class Sea_urchin{
 class Jellyfish{
     constructor(screen, x, y){
         this.screen = screen;
-        this.point = 300;
+        this.point = 400;
         this.ammo = 0;
         this.area = himi_js.area(x, y, 80, 80);
         this.image = himi_js.load_image("jellyfish.png");
