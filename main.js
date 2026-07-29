@@ -332,10 +332,10 @@ class Player{
             this.invincible_timer -= delta;
         }
         //キー
-        if (himi_js.key_down("ArrowRight")){
+        if (himi_js.key_down("ArrowRight") || himi_js.key_down("d")){
             this.area.x += this.speed * delta;
         }
-        if (himi_js.key_down("ArrowLeft")){
+        if (himi_js.key_down("ArrowLeft") || himi_js.key_down("a")){
             this.area.x -= this.speed * delta;
         }
         if (himi_js.key_down(" ")){
@@ -347,7 +347,7 @@ class Player{
             this.area.x += himi_js.left_stick().x * this.speed * delta;
         }else {
             if (himi_js.pad_down("right")){
-                this.area.x += this.speed * delta;
+                this.area.x += this.speed * delta;da
             }
             if (himi_js.pad_down("left")){
                 this.area.x -= this.speed * delta;
