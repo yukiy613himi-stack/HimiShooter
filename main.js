@@ -3,23 +3,13 @@ class Main {
         himi_js.init(850, 1500, "HimiShooter");
         this.scene = "title";
         himi_js.set_font("")
+        this.peaper = himi_js.load_image("peaper.jpg");
         this.himi_mode = false;
-        this.dot_list = [];
         this.screens = {
             title: new TitleScreen(this),
             play: new PlayScreen(this),
             gameover: null
         };
-        for (let i = 0; i < 150; i++) {
-            const color = himi_js.rand_int(195, 200);
-            this.dot_list.push({
-                x: himi_js.rand_int(0, himi_js.width()),
-                y: himi_js.rand_int(0, himi_js.height()),
-                w: himi_js.rand_int(7, 13),
-                h: himi_js.rand_int(7, 13),
-                color: `rgb(${color}, ${color}, ${color})`
-            });
-        }
         himi_js.loop(this.update.bind(this), this.draw.bind(this));
     }
 
@@ -28,11 +18,7 @@ class Main {
     }
 
     draw() {
-        himi_js.clear_color("rgb(212, 212, 212)")
-        for (let i = 0; i < this.dot_list.length; i++) {
-            const dot = this.dot_list[i];
-            himi_js.draw_rect(dot.x, dot.y, dot.w, dot.h, dot.color);
-        }
+        himi_js.draw_image(this.peaper, 0, 0, himi_js.width(), himi_js.height());
         this.screens[this.scene].draw();
     }
 }
@@ -224,8 +210,8 @@ class PlayScreen{
         himi_js.draw_text("→", himi_js.center_x() + 300, himi_js.height() - 170, 70, "white")
         himi_js.draw_text(`PLAYER: ${this.player.lives}`, himi_js.width() / 2, himi_js.height() - 20, 30, "white");
         himi_js.draw_text(`LEVEL: ${this.level}`, himi_js.width() / 2, himi_js.height() - 50, 30, "white");
-        himi_js.draw_text(`${this.messege}`, himi_js.width() / 2, himi_js.height() / 2, 100, "rgb(255, 234, 0)");
-        himi_js.draw_line(0, this.under_line, himi_js.width(), this.under_line, "white", 5);
+        himi_js.draw_text(`${this.messege}`, himi_js.width() / 2, himi_js.height() / 2, 100, "rgb(255, 106, 0)");
+        himi_js.draw_line(0, this.under_line, himi_js.width(), this.under_line, "black", 5);
     }
 }
 
@@ -286,21 +272,21 @@ class Game_Over{
             himi_js.center_x(),
             himi_js.center_y() - 50,
             70,
-            "rgb(255, 255, 255)"
+            "rgb(13, 0, 197)"
         );
         himi_js.draw_text(
             `今回の称号:  ${this.player_title}`,
             himi_js.center_x(),
             himi_js.center_y() + 50,
             45,
-            "rgb(255, 255, 255)"
+            "rgb(13, 0, 197)"
         )
         himi_js.draw_text(
             "エンターキーか画面タップまたはスタートボタンで再スタート",
             himi_js.width() / 2,
             himi_js.height() - 50,
             30,
-            "rgb(255, 255, 255)"
+            "rgb(13, 0, 197)"
         );
     }
 }
@@ -821,10 +807,10 @@ class Super_Tuna{
         //プレイヤーの弾に当たった時の処理
         if (himi_js.collision(this.area, this.screen.player_bullet.area) && this.explosion_timer == null) {
             if (this.screen.player.bullet_speed == 500) {
-                this.screen.messege("弾速アップ!!");
+                this.screen.draw_messege("弾速アップ!!");
                 this.screen.player.bullet_speed = 1000;
             } else if (this.screen.player.bullet_speed == 1000) {
-                this.screen.messege("弾の大きさアップ!!");
+                this.screen.draw_messege("弾の大きさアップ!!");
                 this.screen.player.bullet_size = 2;
             } else {
                 this.screen.score += this.screen.screen.himi_mode ? this.point * 2 : this.point;
