@@ -311,6 +311,8 @@ class Player{
 
     shoot() {
         if (this.can_shoot) {
+            himi_js.vibrate_phone(0.3);
+            himi_js.vibrate_gamepad(0, 0.3, 0.5, 0.5);
             this.can_shoot = false;
             this.screen.player_bullet.area.x = this.area.x + this.area.w / 2 - this.screen.player_bullet.area.w / 2
             this.screen.player_bullet.area.y = this.area.y - this.screen.player_bullet.area.h
@@ -320,6 +322,8 @@ class Player{
     take_damage() {
         if (this.invincible_timer > 0) return;
         this.lives -= 1;
+        himi_js.vibrate_phone(1.5);
+        himi_js.vibrate_gamepad(0, 1.5, 1, 1);
         if (this.lives < 0) {
             this.screen.screen.screens.gameover = new Game_Over(this.screen.screen)
             this.screen.screen.scene = "gameover";
