@@ -128,6 +128,8 @@
                 //マルチタップ対応
                 this.touches = {};
 
+                const use_pointer = window.PointerEvent !== undefined;
+
                 const update_input_from_event = (e, pointerId = null) => {
                     const pos = this.get_mouse_pos(e);
                     this.mouse.x = pos.x;
@@ -142,15 +144,10 @@
                     return pos;
                 };
 
-                //マウスクリック/タップ検知
+                // マウス検知
                 this.canvas.addEventListener("mousemove", (e) => {
                     update_input_from_event(e);
                 });
-
-                this.canvas.addEventListener("touchmove", (e) => {
-                    e.preventDefault();
-                    update_input_from_event(e, "touch");
-                }, {passive: false});
 
                 this.canvas.addEventListener("mousedown", e => {
                     update_input_from_event(e);
@@ -163,47 +160,54 @@
                     this.mouse_down = false;
                 });
 
-                this.canvas.addEventListener("touchstart", e => {
-                    e.preventDefault();
-                    update_input_from_event(e, "touch");
-
-                    this.mouse_down = true;
-                    this.mouse_clicked = true;
-                });
-
-                this.canvas.addEventListener("touchend", e => {
-                    e.preventDefault();
-                    delete this.touches.touch;
-                    this.mouse_down = false;
-                });
-
-                this.canvas.addEventListener("touchcancel", e => {
-                    e.preventDefault();
-                    delete this.touches.touch;
-                    this.mouse_down = false;
-                });
-
-                window.addEventListener("touchend", () => {
-                    this.mouse_down = false;
-                });
-
-                this.canvas.addEventListener("pointerdown", e => {
-                    update_input_from_event(e, e.pointerId);
-                });
-
-                this.canvas.addEventListener("pointermove", e => {
-                    if (this.touches[e.pointerId]) {
+                if (use_pointer) {
+                    this.canvas.addEventListener("pointerdown", e => {
                         update_input_from_event(e, e.pointerId);
-                    }
-                });
+                        this.mouse_down = true;
+                        this.mouse_clicked = true;
+                    });
 
-                window.addEventListener("pointerup", e => {
-                    delete this.touches[e.pointerId];
-                });
+                    this.canvas.addEventListener("pointermove", e => {
+                        if (this.touches[e.pointerId]) {
+                            update_input_from_event(e, e.pointerId);
+                        }
+                    });
 
-                this.canvas.addEventListener("pointercancel", e => {
-                    delete this.touches[e.pointerId];
-                });
+                    window.addEventListener("pointerup", e => {
+                        delete this.touches[e.pointerId];
+                        this.mouse_down = false;
+                    });
+
+                    this.canvas.addEventListener("pointercancel", e => {
+                        delete this.touches[e.pointerId];
+                        this.mouse_down = false;
+                    });
+                } else {
+                    this.canvas.addEventListener("touchstart", e => {
+                        e.preventDefault();
+                        update_input_from_event(e, "touch");
+
+                        this.mouse_down = true;
+                        this.mouse_clicked = true;
+                    }, {passive: false});
+
+                    this.canvas.addEventListener("touchmove", e => {
+                        e.preventDefault();
+                        update_input_from_event(e, "touch");
+                    }, {passive: false});
+
+                    this.canvas.addEventListener("touchend", e => {
+                        e.preventDefault();
+                        delete this.touches.touch;
+                        this.mouse_down = false;
+                    }, {passive: false});
+
+                    this.canvas.addEventListener("touchcancel", e => {
+                        e.preventDefault();
+                        delete this.touches.touch;
+                        this.mouse_down = false;
+                    }, {passive: false});
+                }
             },
 
             width() {
