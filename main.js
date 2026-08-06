@@ -60,6 +60,8 @@ class TitleScreen{
     draw() {
         if (this.screen.himi_mode) {
             himi_js.draw_text("ひみモード", himi_js.width() / 2, himi_js.height() / 2 - 200, 50, "rgb(227, 147, 0)");
+        } else {
+            himi_js.draw_text("バージョン2", himi_js.width() / 2, himi_js.height() / 2 - 200, 50, "rgb(227, 147, 0)");
         }
         himi_js.draw_text("Himi Shooter", himi_js.width() / 2, himi_js.height() / 2, 130, "rgb(227, 147, 0)");
         himi_js.draw_text("エンターキーか画面タップまたはスタートボタンでスタート", himi_js.width() / 2, himi_js.height() / 2 + 200, 30, "rgb(227, 147, 0)");
