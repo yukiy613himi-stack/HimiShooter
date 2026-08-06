@@ -125,9 +125,12 @@
 
                 //マウスクリック/タップ検知
                 this.canvas.addEventListener("mousemove", (e) => {
-                    const pos = this.get_mouse_pos(e);
-                    this.mouse.x = pos.x;
-                    this.mouse.y = pos.y;
+                    const rect = this.canvas.getBoundingClientRect();
+                    const scale_x = this.width() / rect.width;
+                    const scale_y = this.height() / rect.height;
+
+                    this.mouse_x = (e.clientX - rect.left) * scale_x;
+                    this.mouse_y = (e.clientY - rect.top) * scale_y;
                 });
 
                 this.canvas.addEventListener("touchmove", (e) => {
@@ -207,7 +210,7 @@
 
 
             //ゲームループ　update関数にはdeltaが渡される
-            loop(update, draw) {
+            loop(update, draw = null) {
                 let last_time = performance.now();
                 const frame = () => {
                     const now = performance.now();
@@ -223,7 +226,9 @@
                     }
                     this.update_gamepad();
                     update(delta);
-                    draw();
+                    if (draw !== null) {
+                        draw();
+                    }
                     this.mouse_clicked = false;
                     requestAnimationFrame(frame);
                 }
@@ -235,12 +240,12 @@
                 const h = document.documentElement.clientHeight;
 
                 const scale = Math.min(
-                    w / this.width(),
-                    h / this.height()
+                    w / this.canvas.width,
+                    h / this.canvas.height
                 );
 
-                this.canvas.style.width = (this.width() * scale) + "px";
-                this.canvas.style.height = (this.height() * scale) + "px";
+                this.canvas.style.width = (this.canvas.width * scale) + "px";
+                this.canvas.style.height = (this.canvas.height * scale) + "px";
             },
 
             get_gamepad(index = 0) {
@@ -305,14 +310,10 @@
                 return this.mouse_clicked;
             },
 
-            get_mouse_pos(e) {
-                const rect = this.canvas.getBoundingClientRect();
-                const scale_x = this.width() / rect.width;
-                const scale_y = this.height() / rect.height;
-
+            get_mouse_pos() {
                 return {
-                    x: (e.clientX - rect.left) * scale_x,
-                    y: (e.clientY - rect.top) * scale_y
+                    x: this.mouse_x,
+                    y: this.mouse_y
                 };
             },
 
@@ -346,31 +347,106 @@
                 this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
             },
 
-            //画像読み込みを先にしておいて次の読み込みを早める
-            preload_folder(file_list, folder) {
-                const useFolder = folder && folder.length > 0;
-
-                for (const file of file_list) {
-                    const img = new Image();
-                    img.src = useFolder ? (folder + "/" + file) : file;
-                }
-            },
-
-            //画像読み込み
             load_image(path) {
-                const img = new Image();
-                img.src = path;
+                const img = {
+                    bitmap: null,
+                    ready: false
+                };
+
+                const image = new Image();
+                image.src = path;
+
+                image.onload = () => {
+                    createImageBitmap(image).then(bmp => {
+                        img.bitmap = bmp;
+                        img.ready = true;
+                    });
+                };
+
                 return img;
             },
 
-            //画像描画
-            draw_image(img, x, y, w = img.width, h = img.height) {
-                this.ctx.drawImage(img, x, y, w, h);
+            draw_image(
+                img,
+                x,
+                y,
+                w = null,
+                h = null,
+                flipX = false,
+                flipY = false,
+                angle_deg = 0
+            ) {
+                if (img.ready === false) return;
+
+                const source = img.bitmap || img;
+
+                const W = w ?? (source.width  || source.videoWidth);
+                const H = h ?? (source.height || source.videoHeight);
+
+                const angle = angle_deg * Math.PI / 180;
+
+                this.ctx.save();
+                this.ctx.translate(x + W / 2, y + H / 2);
+                this.ctx.rotate(angle);
+                this.ctx.scale(flipX ? -1 : 1, flipY ? -1 : 1);
+                this.ctx.drawImage(source, -W / 2, -H / 2, W, H);
+                this.ctx.restore();
             },
 
             //エリアの位置に画像をかく
             area_to_image(img, area) {
-                this.ctx.drawImage(img, area.x, area.y, area.w, area.h);
+                this.draw_image(img, area.x, area.y, area.w, area.h);
+            },
+
+            load_video(path) {
+                const video = document.createElement("video");
+                video.src = path;
+                video.loop = true;
+                video.muted = true;
+                video.playsInline = true;   // iPhone対策
+                video.ready = false;
+
+                video.addEventListener("canplay", () => {
+                    video.ready = true;
+                    video.play();
+                });
+
+                video.load();
+
+                return video;
+            },
+
+            draw_video(
+                video,
+                x,
+                y,
+                w = video.videoWidth,
+                h = video.videoHeight,
+                flipX = false,
+                flipY = false,
+                angle_deg = 0,
+            ) {
+                if (!video.ready || video.videoWidth === 0) return;
+                
+                this.ctx.save();
+
+                // 中心へ移動
+                this.ctx.translate(x + w / 2, y + h / 2);
+
+                const angle = angle_deg * Math.PI / 180;
+                // 回転
+                this.ctx.rotate(angle);
+
+                // 反転
+                this.ctx.scale(
+                    flipX ? -1 : 1,
+                    flipY ? -1 : 1
+                );
+
+                // 中心基準で描画
+                this.ctx.drawImage(video, -w / 2, -h / 2, w, h);
+
+                this.ctx.restore();
             },
 
             draw_text(text, x, y, size = 32, color = "black") {
