@@ -172,14 +172,14 @@
 
                 this.canvas.addEventListener("pointerdown", e => {
                     const pos = this.get_mouse_pos(e);
-                    this.touches[e.pointerId] = {x: pos.x, y: pos.y};
+                    himi_js.touches[e.pointerId] = {x: pos.x, y: pos.y};
                 });
 
                 this.canvas.addEventListener("pointermove", e => {
-                    if (this.touches[e.pointerId]) {
+                    if (himi_js.touches[e.pointerId]) {
                         const pos = this.get_mouse_pos(e);
-                        this.touches[e.pointerId].x = pos.x;
-                        this.touches[e.pointerId].y = pos.y;
+                        himi_js.touches[e.pointerId].x = pos.x;
+                        himi_js.touches[e.pointerId].y = pos.y;
                     }
                 });
 
